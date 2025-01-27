@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: "IBM Plex Sans", sans-serif;
+}
+
+.fade-out {
+  animation: fadeOutUp 1s forwards;
+}
+
+@keyframes fadeOutUp {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+.markdown code {
+  display: block;
+  white-space: pre-wrap;
+}
+
+.knowledge {
+  color: #4a4a4a !important;
+}
