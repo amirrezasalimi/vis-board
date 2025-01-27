@@ -1,12 +1,12 @@
 import BoardCanvas from "./components/canvas";
-import Title from "./components/title";
+import Menu from "./components/menu";
 import MessageInputs from "./components/message-inputs";
 import Settings from "./components/settings";
 
 const BoardMain = () => {
   return (
     <div className="flex bg-[#FFF5E6] h-screen size-full">
-      <Title />
+      <Menu />
       <MessageInputs />
       <BoardCanvas />
       <Settings />
