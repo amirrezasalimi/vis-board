@@ -127,9 +127,9 @@ export function useBoardSyncedState(roomId: string) {
     }
   }, [roomId]);
 
-  if (!state.isLoaded) {
-    return null;
-  }
+  // if (!state.isLoaded) {
+  //   return null;
+  // }
 
   return useReactSyncedStore(state.store);
 }
