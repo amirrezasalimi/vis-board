@@ -11,14 +11,15 @@ export interface MessageItem {
 }
 
 export interface BranchNodeData {
+  parent_branch_id?: string;
   title: string;
   messages: MessageItem[];
   [key: string]: unknown;
-  linked?: boolean;
+  bg_color?: string;
 }
 
 export interface KnowledgeNodeData {
-  branchId: string;
+  branch_id: string;
   title: string | null;
   content: string;
   timestamp: number;

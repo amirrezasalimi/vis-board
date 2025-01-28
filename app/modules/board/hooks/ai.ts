@@ -14,7 +14,7 @@ const useAi = () => {
     const knowledges = store.knowledges;
 
     return Object.values(knowledges).filter(
-      (node) => node?.data.branchId === store.config.activeBranch
+      (node) => node?.data.branch_id === store.config.activeBranch
     );
   };
 
@@ -190,7 +190,7 @@ OR:
           store.knowledges[id] = {
             type: "knowledge",
             data: {
-              branchId: branch.id,
+              branch_id: branch.id,
               title: knowledge.title,
               content: knowledge.content,
               timestamp: Date.now(),
@@ -216,7 +216,7 @@ OR:
             target: id,
             type: "bezier",
             data: {
-              branchId: branch.id,
+              branch_id: branch.id,
             },
           });
         }

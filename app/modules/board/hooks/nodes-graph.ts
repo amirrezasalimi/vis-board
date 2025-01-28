@@ -1,122 +1,109 @@
-import type { Edge, Node } from "@xyflow/react";
-import { flextree } from "d3-flextree";
+import dagre from "dagre";
 import { NODE_SIZES } from "../constants";
-import type { ExtraNode } from "../types/nodes";
 import type { ExtraEdge } from "../types/edge";
-
+import type { ExtraNode } from "../types/nodes";
 interface CustomNode extends ExtraNode {
   type: keyof typeof NODE_SIZES;
 }
 
-function convertToNestedFormat(
-  nodes: CustomNode[],
-  edges: Edge[],
-  rootNodeId: string
-) {
-  // Create a map for quick lookup of nodes by their id
-  const nodeMap = new Map(nodes.map((node) => [node.id, node]));
+// Configuration constants
+const HORIZONTAL_SPACING = 64; // Distance between nodes horizontally
+const VERTICAL_SPACING = 64; // Distance between nodes vertically
 
-  // Create a map to store children of each node
-  const childrenMap = new Map();
-
-  // Populate the childrenMap
-  edges.forEach((edge) => {
-    const parentId = edge.source;
-    const childId = edge.target;
-
-    if (!childrenMap.has(parentId)) {
-      childrenMap.set(parentId, []);
-    }
-
-    childrenMap.get(parentId).push(childId);
-  });
-
-  // Find the root node(s) - nodes with no incoming edges
-  const rootNodes = nodes.filter(
-    (node) => !edges.some((edge) => edge.target === node.id)
-  );
-
-  // Recursive function to build the nested structure
-  const buildNestedStructure = (nodeId: string) => {
-    const node = nodeMap.get(nodeId);
-    if (!node) {
-      throw new Error(`Node not found: ${nodeId}`);
-    }
-    const size = NODE_SIZES[node.type];
-    const nestedNode = {
-      size, // Assuming width and height are properties of the node
-      id: node.id, // Include the id if needed
-      children: [],
-      full_node: node,
-    };
-
-    if (childrenMap.has(nodeId)) {
-      nestedNode.children = childrenMap
-        .get(nodeId)
-        .map((childId: string) => buildNestedStructure(childId));
-    }
-
-    return nestedNode;
-  };
-
-  // Build the nested structure starting from the root nodes
-  const nestedStructure = rootNodes.map((rootNode) =>
-    buildNestedStructure(rootNode.id)
-  );
-
-  // If there's only one root node, return it directly, otherwise return the array
-  return nestedStructure.length === 1 ? nestedStructure[0] : nestedStructure;
-}
-
+/**
+ * Creates a horizontal layout for nodes and edges.
+ * @param nodes - Array of nodes to position.
+ * @param edges - Array of edges connecting nodes.
+ * @returns Object containing positioned nodes.
+ */
 export const calcNodesPosition = (
   nodes: CustomNode[],
   edges: ExtraEdge[]
 ): { nodes: CustomNode[] } => {
   const positionedNodes: CustomNode[] = [];
-
-  const roots = nodes.filter((node) => node.type == "branch");
+  const nodeMap = new Map(nodes.map((node) => [node.id, node]));
+  const roots = nodes.filter((node) => node.type === "branch");
 
   for (const root of roots) {
-    const children = nodes.filter(
-      (node) => node.type == "knowledge" || node.data?.branchId == root.id
+    // Filter direct children for left and right sides
+    const directLeftChildren = nodes.filter(
+      (n) => n.data?.branch_id === root.id && n.data?.side === "left"
     );
-    const relatedEdges = edges.filter((edge) => edge.data?.branchId == root.id);
+    const directRightChildren = nodes.filter(
+      (n) => n.data?.branch_id === root.id && n.data?.side === "right"
+    );
 
-    const leftNodes = children.filter((node) => node.data.side == "left");
-    const rightNodes = children.filter((node) => node.data.side == "right");
-
-    if (!leftNodes.length && !rightNodes.length) {
-      positionedNodes.push({
-        ...root,
-        position: {
-          x: 0,
-          y: 0,
-        },
-      });
-      continue;
-    }
-    const allNodes = [root, ...leftNodes, ...rightNodes];
-
-    const layout = flextree({
-      spacing: 0,
+    // Initialize Dagre graph
+    const graph = new dagre.graphlib.Graph();
+    graph.setGraph({
+      rankdir: "LR", // Horizontal layout (Left-to-Right)
+      nodesep: HORIZONTAL_SPACING,
+      ranksep: VERTICAL_SPACING,
     });
-    const nestedFormat = convertToNestedFormat(allNodes, relatedEdges, "");
-    const tree = layout.hierarchy(nestedFormat);
-    layout(tree);
+    graph.setDefaultEdgeLabel(() => ({}));
 
-    for (const node of tree.nodes) {
-      if (node.data) {
-        // @ts-ignore
-        const data = node.data.full_node as CustomNode;
+    // Add root node to the graph
+    const rootSize = NODE_SIZES.branch;
+    graph.setNode(root.id, {
+      width: rootSize[0],
+      height: rootSize[1],
+      node: root,
+    });
+
+    // Process nodes for a specific side (left or right)
+    const processSide = (sideNodes: CustomNode[], side: "left" | "right") => {
+      sideNodes.forEach((node) => {
+        const default_size = NODE_SIZES[node.type];
+        const nodeSize = {
+          width: node.width || default_size[0],
+          height: node.height || default_size[1],
+        };
+        graph.setNode(node.id, {
+          width: nodeSize.width,
+          height: nodeSize.height,
+          node,
+        });
+
+        // Connect root to side nodes
+        graph.setEdge(root.id, node.id, {
+          weight: 1,
+          labelpos: side === "left" ? "l" : "r",
+        });
+      });
+    };
+
+    // Process left and right sides
+    processSide(directLeftChildren, "left");
+    processSide(directRightChildren, "right");
+
+    // Perform layout calculation
+    dagre.layout(graph);
+
+    // Position nodes based on layout
+    graph.nodes().forEach((nodeId) => {
+      const dagreNode = graph.node(nodeId);
+      // @ts-ignore
+      const originalNode = dagreNode.node;
+
+      if (originalNode.id === root.id) {
+        // Center the root node
         positionedNodes.push({
-          ...data,
+          ...originalNode,
+          position: { x: 0, y: 0 },
+        });
+      } else {
+        // Offset side nodes vertically
+        const side = originalNode.data?.side;
+        const x = dagreNode.x - dagreNode.width / 2 + 64;
+        positionedNodes.push({
+          ...originalNode,
           position: {
-            x: data.data.side == "left" ? -node.y : node.y,
-            y: node.x,
+            x: side == "left" ? -x : x, // Center horizontally
+            y: dagreNode.y - dagreNode.height / 2, // Add vertical offset
           },
         });
       }
-    }
+    });
   }
 
   return { nodes: positionedNodes };
