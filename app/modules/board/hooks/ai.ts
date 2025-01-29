@@ -1,10 +1,13 @@
 import OpenAI from "openai";
 import { useReactiveBoardStore } from "./board.store";
-import type { MessageItem } from "../types/nodes";
+import type { ExtraNode, KnowledgeNodeData, MessageItem } from "../types/nodes";
 import useOai from "./oai";
 import { makeId } from "~/shared/utils/id";
 import useLocalStore from "./local.store";
 import { extractFirstJson } from "../helpers/json";
+import type { Node } from "@xyflow/react";
+import { useState } from "react";
+import { xmlParse } from "../helpers/xml";
 
 const useAi = () => {
   const store = useReactiveBoardStore();
@@ -182,12 +185,89 @@ Return in this JSON array format, no extra talk:
     }
     setGeneratingFollowups(false);
   };
+
+  const [distillLoading, setDistillLoading] = useState(false);
+  const distillMessage = async (side: "left" | "right" = "left") => {
+    if (!branch || distillLoading) return;
+    const messageId = branch.data.messages[branch.data.messages.length - 1].id;
+
+    const message = branch.data.messages.find((m) => m.id === messageId);
+    // ask ai to distill the message into a knowledge node
+    const oai = getOai();
+    setDistillLoading(true);
+    const res = await oai.chat.completions.create({
+      model,
+      messages: [
+        {
+          role: "user",
+          content: `
+<AssistantMessage>
+${message?.content}
+</AssistantMessage>
+---
+- the response should be correct xml format with start and closing tags, without extra talk.
+- title should be short and to the point.
+- content should be in markdown format.
+Please Distill the knowledge from the assistant message into in this xml format, with out any extra talk:
+<knowledge>
+  <title>--</title>
+  <content>--</content>
+</knowledge>
+`,
+        },
+      ],
+    });
+    const ai_response = res.choices[0]?.message?.content;
+
+    if (ai_response) {
+      const xml = xmlParse(ai_response, "knowledge");
+
+      const title = xml?.getElementsByTagName("title")[0]?.textContent;
+      const content = xml?.getElementsByTagName("content")[0]?.textContent;
+      if (title && content) {
+        console.log("distill", title, content);
+
+        const new_knowledge = {
+          id: makeId(),
+          type: "knowledge",
+          data: {
+            branch_id: branch.id,
+            title,
+            content,
+            timestamp: Date.now(),
+            took_seconds: 0,
+            token_per_second: 0,
+            side,
+          } as KnowledgeNodeData,
+          position: {
+            x: 0,
+            y: 0,
+          },
+        } as Node<KnowledgeNodeData>;
+        if (message) {
+          store.knowledges[new_knowledge.id] = new_knowledge;
+          // add edge
+          store.edges.push({
+            id: makeId(),
+            source: branch.id,
+            target: new_knowledge.id,
+            sourceHandle: side,
+            targetHandle: side === "left" ? "right" : "left",
+            type: "default",
+          });
+        }
+      }
+    }
+    setDistillLoading(false);
+  };
   return {
     isReceivingMessage,
     sendTextMessage,
     reloadMessage,
     getModels,
     generateFollowups,
+    distillMessage,
+    distillLoading,
   };
 };
 

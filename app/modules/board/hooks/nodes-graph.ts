@@ -31,6 +31,8 @@ export const calcNodesPosition = (
     const directRightChildren = nodes.filter(
       (n) => n.data?.branch_id === root.id && n.data?.side === "right"
     );
+    // const allNodes = [...directLeftChildren, ...directRightChildren];
+    // console.log(`allNodes`, JSON.stringify(nodes, null, 2));
 
     // Initialize Dagre graph
     const graph = new dagre.graphlib.Graph();
@@ -52,7 +54,7 @@ export const calcNodesPosition = (
     // Process nodes for a specific side (left or right)
     const processSide = (sideNodes: CustomNode[], side: "left" | "right") => {
       sideNodes.forEach((node) => {
-        const default_size = NODE_SIZES[node.type];
+        const default_size = NODE_SIZES?.[node.type] ?? [0, 0];
         const nodeSize = {
           width: node.width || default_size[0],
           height: node.height || default_size[1],

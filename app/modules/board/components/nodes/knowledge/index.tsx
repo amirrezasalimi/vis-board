@@ -1,10 +1,4 @@
-import {
-  Handle,
-  NodeResizeControl,
-  Position,
-  ResizeControlVariant,
-  type NodeProps,
-} from "@xyflow/react";
+import { NodeResizeControl, Position, type NodeProps } from "@xyflow/react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkParse from "remark-parse";
@@ -17,6 +11,7 @@ import {
 import type { ExtraNode, KnowledgeNodeData } from "~/modules/board/types/nodes";
 import { useEffect, useRef, useState } from "react";
 import NiceHandle from "../nice-handle";
+import rehypeRaw from "rehype-raw";
 
 const KnowledgehNode = ({ data, id, width, height }: NodeProps<ExtraNode>) => {
   const store = useReactiveBoardStore();
@@ -73,14 +68,13 @@ const KnowledgehNode = ({ data, id, width, height }: NodeProps<ExtraNode>) => {
       ydoc.transact(() => {
         node.width = width;
         node.height = height;
-        console.log(`resize node ${id} to ${width}x${height}`);
       });
     }, 300);
   };
 
   return (
     <div
-      className={`border-[#D8BFD8] knowledge relative !overflow-visible bg-[#F7F1E5] p-2 border rounded-md overflow-y-auto no-drag nopan nowheel group`}
+      className={`border-[#D8BFD8] knowledge relative bg-[#F7F1E5] p-2 border rounded-md no-drag nopan nowheel group`}
       style={{
         width: `${dimensions.width}px`,
         height: `${dimensions.height}px`,
@@ -107,9 +101,9 @@ const KnowledgehNode = ({ data, id, width, height }: NodeProps<ExtraNode>) => {
 
       {title && <div className="font-semibold">{title}</div>}
       <Markdown
-        className="knowledge-content markdown"
+        className="relative h-full overflow-clip overflow-y-auto knowledge-content markdown"
         remarkPlugins={[remarkParse, remarkGfm]}
-        rehypePlugins={[remarkRehype]}
+        rehypePlugins={[remarkRehype, rehypeRaw]}
       >
         {content}
       </Markdown>

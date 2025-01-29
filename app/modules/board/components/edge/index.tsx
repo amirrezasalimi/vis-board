@@ -26,5 +26,7 @@ export default function VisEdge({
     targetPosition,
   });
 
-  return <BaseEdge path={edgePath} markerEnd={markerEnd} style={style} />;
+  return (
+    <BaseEdge key={id} path={edgePath} markerEnd={markerEnd} style={style} />
+  );
 }

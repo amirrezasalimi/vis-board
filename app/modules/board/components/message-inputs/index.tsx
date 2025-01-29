@@ -36,7 +36,7 @@ const MessageInputs = () => {
                 setText("");
               }
             }}
-            className="border-[#FFB380] border-2 bg-transparent p-2 rounded-md w-full h-full outline-none resize-none"
+            className="border-[#FFB380] border-2 bg-[#FFF5E6] p-2 rounded-md w-full h-full outline-none resize-none"
           />
         )}
       </div>

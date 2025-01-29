@@ -61,7 +61,7 @@ const BranchNode = (props: NodeProps<ExtraNode>) => {
   const followups = lastAssistantMessage?.followups ?? [];
 
   return (
-    <div className="flex flex-col justify-center items-center w-[500px]">
+    <div className="group/node flex flex-col justify-center items-center w-[500px]">
       <NiceHandle
         id={`left`}
         type="source"
@@ -176,6 +176,83 @@ const BranchNode = (props: NodeProps<ExtraNode>) => {
             })}
           </div>
         )}
+      </div>
+
+      {/* distill */}
+      <div
+        onClick={() => {
+          ai.distillMessage();
+        }}
+        className="group-hover/node:visible bottom-8 -left-20 absolute flex justify-center items-center bg-[#FF7F7F] rounded-full cursor-pointer invisible size-12"
+      >
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M8 2V6"
+            stroke="white"
+            stroke-width="1.6"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M12 2V6"
+            stroke="white"
+            stroke-width="1.6"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M16 2V6"
+            stroke="white"
+            stroke-width="1.6"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M18 4H6C4.89543 4 4 4.89543 4 6V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V6C20 4.89543 19.1046 4 18 4Z"
+            stroke="white"
+            stroke-width="1.6"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M8 10H14"
+            stroke="white"
+            stroke-width="1.6"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M8 14H16"
+            stroke="white"
+            stroke-width="1.6"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M8 18H13"
+            stroke="white"
+            stroke-width="1.6"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        {/* triangle before */}
+        <svg
+          width="17"
+          height="13"
+          viewBox="0 0 17 13"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className="absolute translate-x-8"
+        >
+          <path d="M17 5.5L0 0V12.5L17 5.5Z" fill="#FF7F7F" />
+        </svg>
       </div>
     </div>
   );
