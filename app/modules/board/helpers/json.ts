@@ -7,22 +7,35 @@ const cleanJson = (text: string) => {
   // If a match is found, return the extracted JSON part trimmed of whitespace, otherwise return the original text
   return stripJsonComments(match ? match[2].trim() : text);
 };
-
 export function extractFirstJson(content: string) {
   content = cleanJson(content);
   content = content.replace(new RegExp("```json", "g"), "");
   content = content.replace(new RegExp("```", "g"), "");
-  // Find the first '{' and the last '}'
-  const firstOpenBrace = content.indexOf("{");
-  const lastCloseBrace = content.lastIndexOf("}");
 
-  // Check if braces exist
+  // Find the first '{' or '['
+  const firstOpenBrace = content.indexOf("{");
+  const firstOpenBracket = content.indexOf("[");
+
+  // Determine if the first JSON structure is an object or an array
+  let startIndex = -1;
+  let endIndex = -1;
+
   if (
     firstOpenBrace !== -1 &&
-    lastCloseBrace !== -1 &&
-    lastCloseBrace > firstOpenBrace
+    (firstOpenBracket === -1 || firstOpenBrace < firstOpenBracket)
   ) {
-    const jsonString = content.substring(firstOpenBrace, lastCloseBrace + 1);
+    // JSON object case
+    startIndex = firstOpenBrace;
+    endIndex = content.lastIndexOf("}");
+  } else if (firstOpenBracket !== -1) {
+    // JSON array case
+    startIndex = firstOpenBracket;
+    endIndex = content.lastIndexOf("]");
+  }
+
+  // Check if valid start and end indices exist
+  if (startIndex !== -1 && endIndex !== -1 && endIndex > startIndex) {
+    const jsonString = content.substring(startIndex, endIndex + 1);
 
     try {
       // Try parsing to ensure it's valid JSON

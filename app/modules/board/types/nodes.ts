@@ -9,6 +9,7 @@ export interface MessageItem {
   timestamp?: number;
   took_seconds?: number;
   token_per_second?: number;
+  followups?: string[];
 }
 
 export interface BranchNodeData {

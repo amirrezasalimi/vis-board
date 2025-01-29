@@ -4,13 +4,19 @@ import type { MessageItem } from "../types/nodes";
 import useOai from "./oai";
 import { makeId } from "~/shared/utils/id";
 import useLocalStore from "./local.store";
+import { extractFirstJson } from "../helpers/json";
 
 const useAi = () => {
   const store = useReactiveBoardStore();
   const { getOai, model } = useOai();
   const branch = store.branches?.[store.config.activeBranch ?? ""];
 
-  const { isReceivingMessage, setIsReceivingMessage } = useLocalStore();
+  const {
+    isReceivingMessage,
+    setIsReceivingMessage,
+    generatingFollowups,
+    setGeneratingFollowups,
+  } = useLocalStore();
   const toOaiMessages = (
     messages: MessageItem[]
   ): OpenAI.Chat.Completions.ChatCompletionMessageParam[] => {
@@ -22,6 +28,7 @@ const useAi = () => {
         } as any)
     );
   };
+  const SystemPrompt = `You are a friendly AI assistant that helps people find information.\n you always answer in markdown format.`;
   const sendTextMessage = async (message: string) => {
     if (!message || isReceivingMessage) return;
 
@@ -44,8 +51,7 @@ const useAi = () => {
       messages: [
         {
           role: "system",
-          content:
-            "You are a friendly AI assistant that helps people find information.",
+          content: SystemPrompt,
         },
         ...toOaiMessages(branch.data.messages),
       ],
@@ -72,7 +78,7 @@ const useAi = () => {
         }
       }
     }
-
+    generateFollowups(assistantMessageId);
     setIsReceivingMessage(false);
   };
 
@@ -99,8 +105,7 @@ const useAi = () => {
       messages: [
         {
           role: "system",
-          content:
-            "You are a friendly AI assistant that helps people find information.",
+          content: SystemPrompt,
         },
         ...toOaiMessages(previousMessages),
       ],
@@ -118,7 +123,7 @@ const useAi = () => {
         targetMessage.content += content;
       }
     }
-
+    generateFollowups(messageId);
     setIsReceivingMessage(false);
   };
 
@@ -129,7 +134,61 @@ const useAi = () => {
     return response.data;
   };
 
-  return { isReceivingMessage, sendTextMessage, reloadMessage, getModels };
+  const generateFollowups = async (messageId: string) => {
+    console.log("generateFollowups", messageId);
+
+    if (!branch || generatingFollowups) return;
+    const message = branch.data.messages.find((m) => m.id === messageId);
+    if (message) {
+      setGeneratingFollowups(true);
+      const oai = getOai();
+      const response = await oai.chat.completions.create({
+        model,
+        messages: [
+          {
+            role: "user",
+            content: `
+<AssistantMessage>:
+${message.content}
+</AssistantMessage>
+---
+
+Please generate 4 very short followup questions based on the assistant message ( maximum 4 words each),
+the followups should questions user can ask from ai related to that message.
+if the assistant message was casual/regular talk and not much information on it, you have to return an empty array.
+
+---
+return in the valid json array without any talk or message.
+Return in this JSON array format, no extra talk:
+[
+   "...",
+   "...",
+]
+`,
+          },
+        ],
+      });
+      const ai_content = response.choices[0]?.message?.content;
+      if (ai_content) {
+        try {
+          const followups = extractFirstJson(ai_content);
+          if (Array.isArray(followups) && followups.length) {
+            message.followups = followups;
+          }
+        } catch (e) {
+          console.log(e);
+        }
+      }
+    }
+    setGeneratingFollowups(false);
+  };
+  return {
+    isReceivingMessage,
+    sendTextMessage,
+    reloadMessage,
+    getModels,
+    generateFollowups,
+  };
 };
 
 export default useAi;

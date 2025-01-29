@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Handle, Position, type NodeProps } from "@xyflow/react";
 import { useReactiveBoardStore } from "~/modules/board/hooks/board.store";
 import type { BranchNodeData, ExtraNode } from "~/modules/board/types/nodes";
@@ -54,6 +54,11 @@ const BranchNode = (props: NodeProps<ExtraNode>) => {
       branches[id].data.messages.splice(index, 1);
     }
   };
+  const lastAssistantMessage = useMemo(() => {
+    const lastMessage = messages[messages.length - 1];
+    return lastMessage.role === "assistant" ? lastMessage : null;
+  }, [messages.length]);
+  const followups = lastAssistantMessage?.followups ?? [];
 
   return (
     <div className="flex flex-col justify-center items-center w-[500px]">
@@ -154,6 +159,23 @@ const BranchNode = (props: NodeProps<ExtraNode>) => {
             );
           })}
         </div>
+        {!!followups.length && (
+          <div className="flex flex-wrap gap-1 mt-1 w-full">
+            {followups.map((followup, index) => {
+              return (
+                <button
+                  key={followup}
+                  className="bg-[#FFE3C4] px-2 py-1 p-1 rounded-md text-[#A75B0E] text-sm"
+                  onClick={() => {
+                    ai.sendTextMessage(followup);
+                  }}
+                >
+                  {followup}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );
