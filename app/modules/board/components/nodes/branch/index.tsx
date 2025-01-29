@@ -6,6 +6,7 @@ import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
+import NiceHandle from "../nice-handle";
 
 const BranchNode = (props: NodeProps<ExtraNode>) => {
   const data = props.data as BranchNodeData;
@@ -54,8 +55,18 @@ const BranchNode = (props: NodeProps<ExtraNode>) => {
 
   return (
     <div className="flex flex-col justify-center items-center w-[500px]">
-      <Handle id={`left`} type="source" position={Position.Left} />
-      <Handle id={`right`} type="source" position={Position.Right} />
+      <NiceHandle
+        id={`left`}
+        type="source"
+        position={Position.Left}
+        className="!-left-2"
+      />
+      <NiceHandle
+        id={`right`}
+        type="source"
+        position={Position.Right}
+        className="!-right-2"
+      />
 
       <div className="z-50 flex justify-center w-full">
         <h1 className="inline-block flex-grow-0 flex-shrink-0 justify-center items-center bg-[#FF7F7F] px-5 p-1 rounded-full w-auto text-[#5E3535]">
@@ -87,7 +98,7 @@ const BranchNode = (props: NodeProps<ExtraNode>) => {
             return (
               <div
                 key={message.timestamp}
-                className="relative z-10 flex gap-2 w-full group"
+                className="group relative z-10 flex gap-2 w-full"
                 style={
                   {
                     "--connector-color": roleStyle?.border,

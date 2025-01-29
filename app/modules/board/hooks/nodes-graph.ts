@@ -21,7 +21,6 @@ export const calcNodesPosition = (
   edges: ExtraEdge[]
 ): { nodes: CustomNode[] } => {
   const positionedNodes: CustomNode[] = [];
-  const nodeMap = new Map(nodes.map((node) => [node.id, node]));
   const roots = nodes.filter((node) => node.type === "branch");
 
   for (const root of roots) {

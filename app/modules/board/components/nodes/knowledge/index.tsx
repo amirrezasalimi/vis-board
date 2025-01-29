@@ -2,6 +2,7 @@ import {
   Handle,
   NodeResizeControl,
   Position,
+  ResizeControlVariant,
   type NodeProps,
 } from "@xyflow/react";
 import Markdown from "react-markdown";
@@ -15,6 +16,7 @@ import {
 } from "~/modules/board/hooks/board.store";
 import type { ExtraNode, KnowledgeNodeData } from "~/modules/board/types/nodes";
 import { useEffect, useRef, useState } from "react";
+import NiceHandle from "../nice-handle";
 
 const KnowledgehNode = ({ data, id, width, height }: NodeProps<ExtraNode>) => {
   const store = useReactiveBoardStore();
@@ -73,12 +75,12 @@ const KnowledgehNode = ({ data, id, width, height }: NodeProps<ExtraNode>) => {
         node.height = height;
         console.log(`resize node ${id} to ${width}x${height}`);
       });
-    }, 30);
+    }, 300);
   };
 
   return (
     <div
-      className={`border-[#D8BFD8] relative knowledge bg-[#F7F1E5] p-2 border rounded-md overflow-y-auto no-drag nopan nowheel group`}
+      className={`border-[#D8BFD8] knowledge relative !overflow-visible bg-[#F7F1E5] p-2 border rounded-md overflow-y-auto no-drag nopan nowheel group`}
       style={{
         width: `${dimensions.width}px`,
         height: `${dimensions.height}px`,
@@ -90,10 +92,18 @@ const KnowledgehNode = ({ data, id, width, height }: NodeProps<ExtraNode>) => {
       >
         x
       </span>
-      <Handle type="target" id={"right"} position={Position.Right} />
-      <Handle type="source" id={"right"} position={Position.Right} />
-      <Handle type="source" id={"left"} position={Position.Left} />
-      <Handle type="target" id={"left"} position={Position.Left} />
+      <NiceHandle
+        type="target"
+        id={"right"}
+        position={Position.Right}
+        className="!-right-1.5"
+      />
+      <NiceHandle
+        type="target"
+        id={"left"}
+        position={Position.Left}
+        className="!-left-1.5"
+      />
 
       {title && <div className="font-semibold">{title}</div>}
       <Markdown
@@ -105,7 +115,11 @@ const KnowledgehNode = ({ data, id, width, height }: NodeProps<ExtraNode>) => {
       </Markdown>
 
       <NodeResizeControl
-        className="!top-[unset] !right-2 !bottom-2 !left-[unset] z-10 !absolute !bg-transparent"
+        minWidth={NODE_SIZES.knowledge[0]}
+        minHeight={NODE_SIZES.knowledge[1]}
+        nodeId={id}
+        position="bottom-right"
+        className="!top-[unset] !right-2 !bottom-2 !left-[unset] z-10 !absolute !bg-transparent !border-none"
         onResize={(_, params) => handleResize(params.width, params.height)}
       >
         <svg
