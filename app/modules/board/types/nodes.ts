@@ -3,6 +3,7 @@ import type { Node } from "@xyflow/react";
 export type NodeTypes = "branch" | "knowledge";
 
 export interface MessageItem {
+  id: string;
   role: "function" | "user" | "assistant" | "system" | "developer" | "tool";
   content?: string | null;
   timestamp?: number;

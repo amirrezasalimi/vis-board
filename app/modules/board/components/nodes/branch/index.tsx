@@ -7,11 +7,12 @@ import remarkGfm from "remark-gfm";
 import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import NiceHandle from "../nice-handle";
+import useAi from "~/modules/board/hooks/ai";
 
 const BranchNode = (props: NodeProps<ExtraNode>) => {
   const data = props.data as BranchNodeData;
   const title = data.title || "";
-
+  const ai = useAi();
   const { branches } = useReactiveBoardStore();
   const messages = branches[props.id]?.data.messages ?? [];
 
@@ -36,6 +37,7 @@ const BranchNode = (props: NodeProps<ExtraNode>) => {
   };
 
   const messagesRef = useRef<HTMLDivElement>(null);
+  const lastMessage = messages[messages.length - 1];
   useEffect(() => {
     if (messagesRef.current) {
       setTimeout(() => {
@@ -45,7 +47,7 @@ const BranchNode = (props: NodeProps<ExtraNode>) => {
         });
       }, 50);
     }
-  }, [messages.length]);
+  }, [lastMessage.content]);
 
   const deleteMessage = (id: string, index: number) => {
     if (branches[id]) {
@@ -123,6 +125,21 @@ const BranchNode = (props: NodeProps<ExtraNode>) => {
                         {message.content}
                       </Markdown>
                     </p>
+                    <div
+                      className="group-hover:visible bottom-0 z-10 sticky flex justify-end invisible"
+                      style={{
+                        backgroundColor: roleStyle.bg,
+                      }}
+                    >
+                      {message.role === "assistant" && (
+                        <button
+                          className="py-1 text-xs"
+                          onClick={() => ai.reloadMessage(message.id)}
+                        >
+                          RELOAD
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
                 <span

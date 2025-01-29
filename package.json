@@ -21,6 +21,7 @@
     "d3-flextree": "^2.1.2",
     "d3-hierarchy": "^3.1.2",
     "dagre": "^0.8.5",
+    "immer": "^10.1.1",
     "isbot": "^5.1.17",
     "meyda": "^5.6.3",
     "openai": "^4.80.0",
@@ -34,7 +35,8 @@
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.1.1",
     "strip-json-comments": "^5.0.1",
-    "y-indexeddb": "^9.0.12"
+    "y-indexeddb": "^9.0.12",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@react-router/dev": "^7.1.3",
