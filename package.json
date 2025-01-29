@@ -17,6 +17,7 @@
     "@types/d3-flextree": "^2.1.4",
     "@types/d3-hierarchy": "^3.1.7",
     "@types/dagre": "^0.7.52",
+    "@uidotdev/usehooks": "^2.4.1",
     "@xyflow/react": "^12.4.2",
     "d3-flextree": "^2.1.2",
     "d3-hierarchy": "^3.1.2",

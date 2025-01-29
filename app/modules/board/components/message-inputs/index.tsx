@@ -1,4 +1,4 @@
-import { useLocalStorage } from "~/shared/hooks/use-local-storage";
+import { useLocalStorage } from "@uidotdev/usehooks";
 import useAi from "../../hooks/ai";
 import VoiceVisualizer from "../voice-visualizer";
 import { useState } from "react";
@@ -18,7 +18,7 @@ const MessageInputs = () => {
               const msg = text.trim();
               console.log(`Voice input: ${msg}`);
 
-              if (!isSilence && msg && !ai.isSending) {
+              if (!isSilence && msg && !ai.isReceivingMessage) {
                 ai.sendTextMessage(msg);
               }
             }}
@@ -40,7 +40,7 @@ const MessageInputs = () => {
           />
         )}
       </div>
-      <div className="bottom-0 left-1/2 z-10 fixed flex justify-center w-32 h-6 -translate-x-1/2 select-none group">
+      <div className="group bottom-0 left-1/2 z-10 fixed flex justify-center w-32 h-6 -translate-x-1/2 select-none">
         <div
           onClick={() => setMode(mode === "voice" ? "text" : "voice")}
           className="-bottom-4 group-hover:bottom-1 hover:bottom-1 absolute flex justify-center gap-2 bg-[#FFB380] px-2 py-1 rounded-md w-24 text-sm text-white capitalize transition-all cursor-pointer"

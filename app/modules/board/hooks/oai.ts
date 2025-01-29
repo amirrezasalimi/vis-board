@@ -1,9 +1,10 @@
 import OpenAI from "openai";
-import { useLocalStorage } from "~/shared/hooks/use-local-storage";
+import { useLocalStorage } from "@uidotdev/usehooks";
 
 const useOai = () => {
   const [endpoint, setEndpoint] = useLocalStorage("end_point", "");
   const [apiKey, setApiKey] = useLocalStorage("api_key", "");
+  const [model, setModel] = useLocalStorage("model", "");
 
   const getOai = () => {
     const oai = new OpenAI({
@@ -20,6 +21,8 @@ const useOai = () => {
     apiKey,
     setApiKey,
     getOai,
+    model,
+    setModel,
   };
 };
 

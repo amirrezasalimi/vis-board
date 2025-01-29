@@ -1,10 +1,34 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Popover } from "react-tiny-popover";
 import useOai from "../../hooks/oai";
+import useAi from "../../hooks/ai";
+import { debounce } from "../../helpers/debounce";
+import type { Model } from "openai/resources/models.mjs";
 
 const Settings = () => {
-  const { apiKey, endpoint, setApiKey, setEndpoint } = useOai();
+  const { apiKey, endpoint, setApiKey, setEndpoint, model, setModel } =
+    useOai();
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+
+  const [models, setModels] = useState<Model[]>([]);
+  const ai = useAi();
+
+  const reloadModels = () => {
+    ai.getModels().then((models) => {
+      if (models) {
+        setModels(models);
+        if (!model) {
+          setModel(models[0].id);
+        }
+      }
+    });
+  };
+
+  const debouncedModelsReloader = useRef(debounce(reloadModels, 1000));
+  useEffect(() => {
+    if (!endpoint.trim()) return;
+    debouncedModelsReloader.current();
+  }, [endpoint, apiKey]);
 
   return (
     <Popover
@@ -28,6 +52,19 @@ const Settings = () => {
             type="text"
             placeholder="xx-1234"
           />
+          {endpoint && (
+            <select
+              className="border-[#ffc885] bg-[#FFF5E6] px-2 py-2 border rounded-xl w-full text-sm outline-none"
+              value={model}
+              onChange={(e) => setModel(e.target.value)}
+            >
+              {models.map((model) => (
+                <option key={model.id} value={model.id}>
+                  {model.id}
+                </option>
+              ))}
+            </select>
+          )}
         </div>
       }
     >

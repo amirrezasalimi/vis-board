@@ -99,7 +99,7 @@ const BranchNode = (props: NodeProps<ExtraNode>) => {
 
             return (
               <div
-                key={message.timestamp}
+                key={message.id}
                 className="group relative z-10 flex gap-2 w-full"
                 style={
                   {

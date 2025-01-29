@@ -1,15 +1,13 @@
 import OpenAI from "openai";
 import { useReactiveBoardStore } from "./board.store";
-import { useState } from "react";
 import type { MessageItem } from "../types/nodes";
 import useOai from "./oai";
 import { makeId } from "~/shared/utils/id";
-import { useLocalStorage } from "~/shared/hooks/use-local-storage";
 import useLocalStore from "./local.store";
 
 const useAi = () => {
   const store = useReactiveBoardStore();
-  const { getOai } = useOai();
+  const { getOai, model } = useOai();
   const branch = store.branches?.[store.config.activeBranch ?? ""];
 
   const { isReceivingMessage, setIsReceivingMessage } = useLocalStore();
@@ -42,7 +40,7 @@ const useAi = () => {
 
     // Get AI response
     const response = await oai.chat.completions.create({
-      model: "deepseek/deepseek-chat",
+      model,
       messages: [
         {
           role: "system",
@@ -97,7 +95,7 @@ const useAi = () => {
 
     // Generate new response
     const response = await oai.chat.completions.create({
-      model: "deepseek/deepseek-chat",
+      model,
       messages: [
         {
           role: "system",
@@ -124,7 +122,14 @@ const useAi = () => {
     setIsReceivingMessage(false);
   };
 
-  return { isReceivingMessage, sendTextMessage, reloadMessage };
+  const getModels = async () => {
+    const oai = getOai();
+    if (!oai.baseURL) return;
+    const response = await oai.models.list();
+    return response.data;
+  };
+
+  return { isReceivingMessage, sendTextMessage, reloadMessage, getModels };
 };
 
 export default useAi;

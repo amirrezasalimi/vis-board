@@ -71,7 +71,7 @@ const Menu = () => {
         </Popover>
         <input
           ref={inputRef}
-          className={` text-[#FF7777]/90 max-w-32 outline-none bg-[#FFF5E6] ${
+          className={`text-[#FF7777]/90 max-w-32 outline-none bg-[#FFF5E6] ${
             isEditing ? "outline outline-1 outline-[#FF7777] rounded-sm" : ""
           }`}
           value={config.title || "Untitled"}
