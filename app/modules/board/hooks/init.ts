@@ -1,15 +1,16 @@
-import { useReactiveBoardStore, useBoardSyncedState } from "./board.store";
+import { makeId } from "~/shared/utils/id";
+import { useReactiveBoardStoreWithRoom } from "./board.store";
 
 const useIniter = (id: string) => {
-  const store = useBoardSyncedState(id);
+  const store = useReactiveBoardStoreWithRoom(id);
   const init = () => {
-    console.log("init", store?.branches);
-
     if (!store) {
       return;
     }
+    console.log("init", store);
+
     const { branches, config } = store;
-    const title = config.title || "Empty Board";
+    const title = config?.title || "Empty Board";
     document.title = title;
 
     if (!config || config.isInitialized) {
@@ -25,11 +26,13 @@ const useIniter = (id: string) => {
         title: "Main",
         messages: [
           {
+            id: makeId(),
             content: "Hey, How can i Help you?!",
             role: "assistant",
             timestamp: Date.now(),
             token_per_second: 0,
             took_seconds: 0,
+            followups: [],
           },
         ],
       },

@@ -7,8 +7,6 @@ import type { ExtraNode } from "../../types/nodes";
 import { calcNodesPosition } from "../../hooks/nodes-graph";
 import type { ExtraEdge } from "../../types/edge";
 import VisEdge from "../edge";
-import { useEffect, useRef, useState } from "react";
-import { debounce } from "../../helpers/debounce";
 
 const nodeTypes: NodeTypes = {
   branch: BranchNode,
