@@ -1,6 +1,7 @@
 import { useParams } from "react-router";
 import BoardMain from "~/modules/board";
 import { BoardStoreProvider } from "~/modules/board/hooks/board.store";
+import { GlobalStoreProvider } from "~/modules/board/hooks/global.store";
 
 const Board = () => {
   const { id } = useParams();
@@ -8,9 +9,11 @@ const Board = () => {
     return null;
   }
   return (
-    <BoardStoreProvider roomId={id}>
-      <BoardMain />
-    </BoardStoreProvider>
+    <GlobalStoreProvider>
+      <BoardStoreProvider boardId={id}>
+        <BoardMain />
+      </BoardStoreProvider>
+    </GlobalStoreProvider>
   );
 };
 

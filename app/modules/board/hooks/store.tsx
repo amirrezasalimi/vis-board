@@ -11,14 +11,7 @@ import type { MappedTypeDescription } from "node_modules/@syncedstore/core/types
 import { useSyncedStore as useReactSyncedStore } from "@syncedstore/react";
 
 // Base store schema that all stores should extend
-type BaseSchema = {
-  config: {
-    version: string;
-    isInitialized: boolean;
-    title: string;
-    activeBranch: string;
-  };
-};
+type BaseSchema = {};
 
 type StoreState<T extends BaseSchema> = {
   store: MappedTypeDescription<T>;
@@ -90,7 +83,7 @@ export function SyncedStoreProvider<T extends BaseSchema>({
 
   return (
     <Context.Provider value={{ store, isLoaded, roomId }}>
-      {children}
+      {isLoaded && children}
     </Context.Provider>
   );
 }
@@ -130,14 +123,17 @@ export function createUseYDoc<T extends BaseSchema>(
   };
 }
 
-export function createUseReactiveStoreWithRoomId<T extends BaseSchema>() {
+export function createUseReactiveStoreWithRoomId<T extends BaseSchema>(
+  schema: T,
+  prefix?: string
+) {
   return function useReactiveStore(roomId: string) {
     // Create a new store instance for the given roomId
     const { store } = useMemo(
       () =>
         createSyncedStore<T>({
-          roomId,
-          schema: {} as T, // Pass the schema (will be overridden in board-store.ts)
+          roomId: prefix ? `${prefix}${roomId}` : roomId,
+          schema, // Pass the schema (will be overridden in board-store.ts)
         }),
       [roomId]
     );

@@ -16,8 +16,6 @@ const MessageInputs = () => {
             dampingFactor={0.4} // Slower return to normal
             onText={(text, isSilence) => {
               const msg = text.trim();
-              console.log(`Voice input: ${msg}`);
-
               if (!isSilence && msg && !ai.isReceivingMessage) {
                 ai.sendTextMessage(msg);
               }

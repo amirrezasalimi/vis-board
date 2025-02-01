@@ -7,13 +7,19 @@ const useIniter = (id: string) => {
     if (!store) {
       return;
     }
-    console.log("init", store);
 
-    const { branches, config } = store;
+    let { branches, config } = store;
     const title = config?.title || "Empty Board";
     document.title = title;
-
-    if (!config || config.isInitialized) {
+    if (!config) {
+      config = {
+        version: "0.1",
+        isInitialized: false,
+        title: title,
+        activeBranch: "",
+      };
+    }
+    if (config?.isInitialized) {
       return;
     }
     // init branch

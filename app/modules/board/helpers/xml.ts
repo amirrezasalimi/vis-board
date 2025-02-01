@@ -9,8 +9,6 @@ const extractXMLContent = (content: string, tag?: string): string | null => {
 };
 const xmlParse = (content: string, parentTag: string) => {
   const xmlContent = extractXMLContent(content, parentTag);
-  console.log("xmlContent", xmlContent);
-
   if (!xmlContent) {
     return null;
   }

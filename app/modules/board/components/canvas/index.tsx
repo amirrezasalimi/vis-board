@@ -18,6 +18,7 @@ const nodeEdges: EdgeTypes = {
 };
 const BoardCanvas = () => {
   const { branches, knowledges, edges } = useReactiveBoardStore();
+
   const flatNodes = [
     ...(Object.values(branches) as ExtraNode[]),
     ...(Object.values(knowledges) as ExtraNode[]),

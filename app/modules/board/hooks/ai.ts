@@ -138,8 +138,6 @@ const useAi = () => {
   };
 
   const generateFollowups = async (messageId: string) => {
-    console.log("generateFollowups", messageId);
-
     if (!branch || generatingFollowups) return;
     const message = branch.data.messages.find((m) => m.id === messageId);
     if (message) {
@@ -225,8 +223,6 @@ Please Distill the knowledge from the assistant message into in this xml format,
       const title = xml?.getElementsByTagName("title")[0]?.textContent;
       const content = xml?.getElementsByTagName("content")[0]?.textContent;
       if (title && content) {
-        console.log("distill", title, content);
-
         const new_knowledge = {
           id: makeId(),
           type: "knowledge",

@@ -10,6 +10,7 @@ import {
   createUseReactiveStoreWithRoomId,
 } from "./store";
 
+export const boardPrefix = "board-";
 // Define the board schema extending BaseSchema
 type BoardSchema = {
   config: {
@@ -42,20 +43,22 @@ const boardSchema: Record<keyof BoardSchema, any> = {
 export const useBoardStore = createUseSyncedStore(BoardStoreContext);
 export const useReactiveBoardStore = createUseReactiveStore(BoardStoreContext);
 export const useBoardStoreYDoc = createUseYDoc(BoardStoreContext);
-export const useReactiveBoardStoreWithRoom =
-  createUseReactiveStoreWithRoomId<BoardSchema>();
+export const useReactiveBoardStoreWithRoom = createUseReactiveStoreWithRoomId(
+  boardSchema,
+  boardPrefix
+);
 
 export function BoardStoreProvider({
   children,
-  roomId,
+  boardId,
 }: {
   children: React.ReactNode;
-  roomId: string;
+  boardId: string;
 }) {
   return (
     <SyncedStoreProvider<BoardSchema>
       Context={BoardStoreContext}
-      roomId={roomId}
+      roomId={`${boardPrefix}${boardId}`}
       schema={boardSchema}
     >
       {children}
