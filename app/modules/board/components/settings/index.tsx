@@ -13,15 +13,19 @@ const Settings = () => {
   const [models, setModels] = useState<Model[]>([]);
   const ai = useAi();
 
+  const [loadingModels, setLoadingModels] = useState(false);
   const reloadModels = () => {
-    ai.getModels().then((models) => {
-      if (models) {
-        setModels(models);
-        if (!model) {
-          setModel(models[0].id);
+    setLoadingModels(true);
+    ai.getModels()
+      .then((models) => {
+        if (models) {
+          setModels(models);
+          if (!model) {
+            setModel(models[0].id);
+          }
         }
-      }
-    });
+      })
+      .finally(() => setLoadingModels(false));
   };
 
   const debouncedModelsReloader = useRef(debounce(reloadModels, 1000));
@@ -52,7 +56,7 @@ const Settings = () => {
             type="text"
             placeholder="xx-1234"
           />
-          {endpoint && (
+          {endpoint && !!models?.length && (
             <select
               className="border-[#ffc885] bg-[#FFF5E6] px-2 py-2 border rounded-xl w-full text-sm outline-none"
               value={model}
@@ -64,6 +68,11 @@ const Settings = () => {
                 </option>
               ))}
             </select>
+          )}
+          {!!loadingModels && (
+            <div>
+              <p>Loading models...</p>
+            </div>
           )}
         </div>
       }
