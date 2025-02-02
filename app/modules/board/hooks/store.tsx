@@ -142,3 +142,14 @@ export function createUseReactiveStoreWithRoomId<T extends BaseSchema>(
     return useReactSyncedStore(store);
   };
 }
+
+export function createSyncedStoreWithRoomId<T extends BaseSchema>(
+  roomId: string,
+  schema: T,
+  prefix?: string
+) {
+  return createSyncedStore<T>({
+    roomId: prefix ? `${prefix}${roomId}` : roomId,
+    schema, // Pass the schema (will be overridden in board-store.ts)
+  });
+}

@@ -8,12 +8,14 @@ import {
   createUseReactiveStore,
   createUseYDoc,
   createUseReactiveStoreWithRoomId,
+  createSyncedStoreWithRoomId,
 } from "./store";
 
 export const boardPrefix = "board-";
 // Define the board schema extending BaseSchema
 type BoardSchema = {
   config: {
+    id: string;
     version: string;
     isInitialized: boolean;
     title: string;
@@ -43,10 +45,10 @@ const boardSchema: Record<keyof BoardSchema, any> = {
 export const useBoardStore = createUseSyncedStore(BoardStoreContext);
 export const useReactiveBoardStore = createUseReactiveStore(BoardStoreContext);
 export const useBoardStoreYDoc = createUseYDoc(BoardStoreContext);
-export const useReactiveBoardStoreWithRoom = createUseReactiveStoreWithRoomId(
-  boardSchema,
-  boardPrefix
-);
+export const useReactiveBoardStoreWithRoom =
+  createUseReactiveStoreWithRoomId<BoardSchema>(boardSchema, boardPrefix);
+export const getBoardStore = (id: string) =>
+  createSyncedStoreWithRoomId<BoardSchema>(id, boardSchema, boardPrefix);
 
 export function BoardStoreProvider({
   children,

@@ -1,33 +1,25 @@
 import { makeId } from "~/shared/utils/id";
 import { useReactiveBoardStoreWithRoom } from "./board.store";
+import { useReactiveGlobalStore } from "./global.store";
 
-const useIniter = (id: string) => {
-  const store = useReactiveBoardStoreWithRoom(id);
+const useIniter = (boardId: string) => {
+  const store = useReactiveBoardStoreWithRoom(boardId);
+  const globalStore = useReactiveGlobalStore();
   const init = () => {
     if (!store) {
       return;
     }
 
     let { branches, config } = store;
-    const title = config?.title || "Empty Board";
-    document.title = title;
-    if (!config) {
-      config = {
-        version: "0.1",
-        isInitialized: false,
-        title: title,
-        activeBranch: "",
-      };
-    }
     if (config?.isInitialized) {
       return;
     }
     // init branch
-    const id = "main-branch";
-    config.activeBranch = id;
-    branches[id] = {
+    const branchId = "main-branch";
+    config.activeBranch = branchId;
+    branches[branchId] = {
       type: "branch",
-      id,
+      id: branchId,
       data: {
         title: "Main",
         messages: [
@@ -44,7 +36,12 @@ const useIniter = (id: string) => {
       },
       position: { x: 0, y: 0 },
     };
+    config.id = boardId;
+    config.title = "Untitled";
+    config.version = "0.1";
+    config.activeBranch = branchId;
     config.isInitialized = true;
+    globalStore.chats.push({ id: boardId, title: config.title });
   };
   return { init };
 };

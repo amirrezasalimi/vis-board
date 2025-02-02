@@ -3,6 +3,7 @@ import type { Route } from "./+types/home";
 import { useNavigate } from "react-router";
 import { useEffect } from "react";
 import useIniter from "~/modules/board/hooks/init";
+import { GlobalStoreProvider } from "~/modules/board/hooks/global.store";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -25,5 +26,9 @@ const BoardInit = ({ id }: { id: string }) => {
 
 export default function Home() {
   const id = makeId(10);
-  return <BoardInit id={id} />;
+  return (
+    <GlobalStoreProvider>
+      <BoardInit id={id} />
+    </GlobalStoreProvider>
+  );
 }
