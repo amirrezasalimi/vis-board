@@ -74,7 +74,7 @@ const KnowledgehNode = ({ data, id, width, height }: NodeProps<ExtraNode>) => {
 
   return (
     <div
-      className={`border-[#D8BFD8] knowledge relative bg-[#F7F1E5] p-2 border rounded-md no-drag nopan nowheel group`}
+      className={`border-[#D8BFD8] knowledge relative bg-[#F7F1E5] overflow-y-hidden p-2 border rounded-md no-drag nopan nowheel group`}
       style={{
         width: `${dimensions.width}px`,
         height: `${dimensions.height}px`,
@@ -100,13 +100,13 @@ const KnowledgehNode = ({ data, id, width, height }: NodeProps<ExtraNode>) => {
       />
 
       {title && <div className="font-semibold">{title}</div>}
-      <Markdown
-        className="relative h-full overflow-clip overflow-y-auto knowledge-content markdown"
-        remarkPlugins={[remarkParse, remarkGfm]}
-        rehypePlugins={[remarkRehype, rehypeRaw]}
+      <div
+        className="relative pb-2 h-full overflow-hidden overflow-y-auto knowledge-content markdown"
+        // remarkPlugins={[remarkParse, remarkGfm]}
+        // rehypePlugins={[remarkRehype, rehypeRaw]}
       >
         {content}
-      </Markdown>
+      </div>
 
       <NodeResizeControl
         minWidth={NODE_SIZES.knowledge[0]}

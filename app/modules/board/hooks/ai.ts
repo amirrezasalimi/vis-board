@@ -205,7 +205,8 @@ ${message?.content}
 ---
 - the response should be correct xml format with start and closing tags, without extra talk.
 - title should be short and to the point.
-- content should be in markdown format.
+- content should be normal short text in simple format.
+
 Please Distill the knowledge from the assistant message into in this xml format, with out any extra talk:
 <knowledge>
   <title>--</title>

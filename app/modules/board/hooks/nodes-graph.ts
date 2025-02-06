@@ -8,7 +8,7 @@ interface CustomNode extends ExtraNode {
 
 // Configuration constants
 const HORIZONTAL_SPACING = 64; // Distance between nodes horizontally
-const VERTICAL_SPACING = 64; // Distance between nodes vertically
+const VERTICAL_SPACING = 24; // Distance between nodes vertically
 
 /**
  * Creates a horizontal layout for nodes and edges.
