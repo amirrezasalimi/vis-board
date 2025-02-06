@@ -3,6 +3,7 @@ import autoprefixer from "autoprefixer";
 import tailwindcss from "tailwindcss";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
+import svgr from "vite-plugin-svgr";
 
 export default defineConfig({
   css: {
@@ -10,5 +11,11 @@ export default defineConfig({
       plugins: [tailwindcss, autoprefixer],
     },
   },
-  plugins: [reactRouter(), tsconfigPaths()],
+  plugins: [
+    svgr({
+      include: "**/*.svg",
+    }),
+    reactRouter(),
+    tsconfigPaths(),
+  ],
 });
