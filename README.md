@@ -2,4 +2,10 @@
 
 ### deep dive into anything with vis board!
 
-[preview](shot.png)
+#### Preview:
+![preview](shot.png)
+
+
+### Todo:
+- add distill for knowledge box
+- multi branch
