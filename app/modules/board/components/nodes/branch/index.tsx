@@ -8,6 +8,8 @@ import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import NiceHandle from "../nice-handle";
 import useAi from "~/modules/board/hooks/ai";
+import Spinner from "~/assets/images/spinner.svg";
+import Note from "~/assets/images/note.svg";
 
 const BranchNode = (props: NodeProps<ExtraNode>) => {
   const data = props.data as BranchNodeData;
@@ -183,65 +185,15 @@ const BranchNode = (props: NodeProps<ExtraNode>) => {
         onClick={() => {
           ai.distillMessage();
         }}
-        className="group-hover/node:visible bottom-8 -left-20 absolute flex justify-center items-center bg-[#FF7F7F] rounded-full cursor-pointer invisible size-12"
+        className={`group-hover/node:visible bottom-8 -left-20 absolute flex justify-center items-center bg-[#FF7F7F] rounded-full cursor-pointer invisible size-12 
+          ${ai.distillLoading ? "!visible" : "invisible"}`}
       >
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M8 2V6"
-            stroke="white"
-            stroke-width="1.6"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-          <path
-            d="M12 2V6"
-            stroke="white"
-            stroke-width="1.6"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-          <path
-            d="M16 2V6"
-            stroke="white"
-            stroke-width="1.6"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-          <path
-            d="M18 4H6C4.89543 4 4 4.89543 4 6V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V6C20 4.89543 19.1046 4 18 4Z"
-            stroke="white"
-            stroke-width="1.6"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-          <path
-            d="M8 10H14"
-            stroke="white"
-            stroke-width="1.6"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-          <path
-            d="M8 14H16"
-            stroke="white"
-            stroke-width="1.6"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-          <path
-            d="M8 18H13"
-            stroke="white"
-            stroke-width="1.6"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
+        {!ai.distillLoading && <Note className="w-6 h-6" />}
+        {ai.distillLoading && (
+          <div className="absolute flex justify-center items-center w-full h-full">
+            <Spinner className="w-6 h-6 text-white animate-spin" />
+          </div>
+        )}
         {/* triangle before */}
         <svg
           width="17"
