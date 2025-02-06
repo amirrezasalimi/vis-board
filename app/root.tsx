@@ -1,3 +1,5 @@
+/// <reference types="vite-plugin-svgr/client" />
+
 import {
   isRouteErrorResponse,
   Links,
