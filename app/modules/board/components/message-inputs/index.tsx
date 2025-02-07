@@ -5,7 +5,7 @@ import { useState } from "react";
 
 const MessageInputs = () => {
   const ai = useAi();
-  const [mode, setMode] = useLocalStorage("mode", "voice");
+  const [mode, setMode] = useLocalStorage("mode", "text");
   const [text, setText] = useState("");
   return (
     <div>
