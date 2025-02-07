@@ -1,6 +1,6 @@
 import React, { useRef, useState, useCallback, useEffect } from "react";
 
-interface VoiceVisualizerProps {
+interface Props {
   silentSeconds?: number;
   onText?: (text: string, isSilence: boolean) => void;
   dampingFactor?: number;
@@ -18,7 +18,7 @@ type SpeechRecognition = any;
 
 const textTimeout = 2000;
 
-const VoiceVisualizer: React.FC<VoiceVisualizerProps> = ({
+const VoiceInput: React.FC<Props> = ({
   silentSeconds = 1.5,
   onText,
   dampingFactor = 0.15,
@@ -151,7 +151,7 @@ const VoiceVisualizer: React.FC<VoiceVisualizerProps> = ({
 
   return (
     <div
-      className="cursor-pointer group size-full"
+      className="group cursor-pointer size-full"
       onClick={toggleMute}
       role="button"
       aria-label="Voice visualizer"
@@ -171,4 +171,4 @@ const VoiceVisualizer: React.FC<VoiceVisualizerProps> = ({
   );
 };
 
-export default VoiceVisualizer;
+export default VoiceInput;

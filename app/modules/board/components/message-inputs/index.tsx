@@ -1,6 +1,6 @@
 import { useLocalStorage } from "@uidotdev/usehooks";
 import useAi from "../../hooks/ai";
-import VoiceVisualizer from "../voice-visualizer";
+import VoiceInput from "../voice-input";
 import { useState } from "react";
 
 const MessageInputs = () => {
@@ -11,7 +11,7 @@ const MessageInputs = () => {
     <div>
       <div className="bottom-4 left-1/2 z-10 fixed w-64 h-16 -translate-x-1/2">
         {mode === "voice" && (
-          <VoiceVisualizer
+          <VoiceInput
             silentSeconds={1.5}
             dampingFactor={0.4} // Slower return to normal
             onText={(text, isSilence) => {
