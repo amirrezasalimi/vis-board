@@ -257,6 +257,78 @@ Please Distill the knowledge from the assistant message into in this xml format,
     }
     setDistillLoading(false);
   };
+
+  const distillKnowledge = async (knowledgeId: string, type: string) => {
+    if (!branch || distillLoading) return;
+
+    setDistillLoading(true);
+    const knowledge = store.knowledges[knowledgeId];
+    if (!knowledge) return;
+    const content = knowledge?.data.content;
+
+    const prompt = `
+Message:
+${content}
+
+---
+
+Based on the message above, please distill the ${type} from the message.
+raw text, maximum 4 paragraphs, no extra talk:
+`;
+
+    const new_knowledge_id = makeId();
+
+    // add knowledge node
+    store.knowledges[new_knowledge_id] = {
+      id: new_knowledge_id,
+      type: "knowledge",
+      data: {
+        branch_id: branch.id,
+        title: type,
+        content: "",
+        timestamp: Date.now(),
+        took_seconds: 0,
+        token_per_second: 0,
+        parentId: knowledgeId,
+        side: knowledge.data.side,
+      } as KnowledgeNodeData,
+      position: {
+        x: 0,
+        y: 0,
+      },
+    };
+    // ai
+    const oai = getOai();
+    const res = await oai.chat.completions.create({
+      model,
+      messages: [
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+      stream: true,
+    });
+
+    let ai_response = "";
+    for await (const chunk of res) {
+      ai_response += chunk.choices[0].delta.content;
+      store.knowledges[new_knowledge_id].data.content = ai_response;
+    }
+    console.log(`Distilled knowledge: ${ai_response}`);
+
+    // add edge
+    store.edges.push({
+      id: makeId(),
+      source: knowledgeId,
+      target: new_knowledge_id,
+      sourceHandle: knowledge.data.side,
+      targetHandle: knowledge.data.side === "left" ? "right" : "left",
+      type: "default",
+    });
+
+    setDistillLoading(false);
+  };
   return {
     isReceivingMessage,
     sendTextMessage,
@@ -265,6 +337,7 @@ Please Distill the knowledge from the assistant message into in this xml format,
     generateFollowups,
     distillMessage,
     distillLoading,
+    distillKnowledge,
   };
 };
 

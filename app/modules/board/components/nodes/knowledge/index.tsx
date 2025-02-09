@@ -7,9 +7,11 @@ import {
 import type { ExtraNode, KnowledgeNodeData } from "~/modules/board/types/nodes";
 import { useEffect, useRef, useState } from "react";
 import NiceHandle from "../nice-handle";
+import useAi from "~/modules/board/hooks/ai";
 
 const KnowledgehNode = ({ data, id, width, height }: NodeProps<ExtraNode>) => {
   const [isHovering, setIsHovering] = useState(false);
+  const ai = useAi();
   const store = useReactiveBoardStore();
   const ydoc = useBoardStoreYDoc();
   const { content, title } = data as KnowledgeNodeData;
@@ -68,6 +70,22 @@ const KnowledgehNode = ({ data, id, width, height }: NodeProps<ExtraNode>) => {
     }, 300);
   };
 
+  const [distillingKey, setDistillingKey] = useState<string | null>(null);
+  const distill_map = {
+    Cons: "Cons",
+    Pros: "Pros",
+    Eli5: "Eli5",
+    Summary: "Summary",
+    Questions: "Questions",
+    Origin: "Origin",
+  };
+
+  const distill = async (type: string) => {
+    if (distillingKey) return;
+    setDistillingKey(type);
+    await ai.distillKnowledge(id, type);
+    setDistillingKey(null);
+  };
   return (
     <div
       className="relative"
@@ -95,7 +113,7 @@ const KnowledgehNode = ({ data, id, width, height }: NodeProps<ExtraNode>) => {
             className="!-right-1.5"
           />
           <NiceHandle
-            type="target"
+            type={node.data.side === "left" ? "source" : "target"}
             id="left"
             position={Position.Left}
             className="!-left-1.5"
@@ -103,7 +121,9 @@ const KnowledgehNode = ({ data, id, width, height }: NodeProps<ExtraNode>) => {
 
           {title && <div className="font-semibold">{title}</div>}
           <div className="relative pb-2 h-full overflow-hidden overflow-y-auto knowledge-content markdown">
-            <span>{content}</span>
+            <span>
+              {content} {id}
+            </span>
           </div>
 
           <NodeResizeControl
@@ -132,11 +152,19 @@ const KnowledgehNode = ({ data, id, width, height }: NodeProps<ExtraNode>) => {
           >
             {isHovering && (
               <div className="flex justify-center items-center gap-4 bg-[#FFE9CF] px-4 py-2 rounded-full text-lg cursor-pointer">
-                <div className="hover:font-semibold">How</div>
-                <div className="hover:font-semibold">Pros</div>
-                <div className="hover:font-semibold">Cons</div>
-                <div className="hover:font-semibold">Origin</div>
-                <div className="hover:font-semibold">eli5</div>
+                {Object.keys(distill_map).map((key) => (
+                  <div
+                    key={key}
+                    className="flex items-center gap-2 hover:font-semibold hover:underline cursor-pointer"
+                    onClick={() => distill(key)}
+                  >
+                    {distillingKey === key ? (
+                      <span>...</span>
+                    ) : (
+                      <span>{key}</span>
+                    )}
+                  </div>
+                ))}
               </div>
             )}
           </div>
