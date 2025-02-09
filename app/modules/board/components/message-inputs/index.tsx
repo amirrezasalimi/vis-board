@@ -2,6 +2,7 @@ import { useLocalStorage } from "@uidotdev/usehooks";
 import useAi from "../../hooks/ai";
 import VoiceInput from "../voice-input";
 import { useState } from "react";
+import VoicePlayer from "../voice-player";
 
 const MessageInputs = () => {
   const ai = useAi();
@@ -10,6 +11,7 @@ const MessageInputs = () => {
   return (
     <div>
       <div className="bottom-4 left-1/2 z-10 fixed w-64 h-16 -translate-x-1/2">
+        {/* <VoicePlayer /> */}
         {mode === "voice" && (
           <VoiceInput
             silentSeconds={1.5}
