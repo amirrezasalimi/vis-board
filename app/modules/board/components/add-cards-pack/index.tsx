@@ -44,6 +44,7 @@ const AddCardsPack = () => {
       timestamp: 0,
       gradient_color: color,
     });
+    setIsOpen(false);
   };
   const popoverRef = useRef(null);
 
