@@ -1,6 +1,7 @@
 import Modal from "~/shared/components/modal";
 import type { CardPack } from "../../types/card";
 import { useEffect, useState } from "react";
+import { useReactiveBoardStore } from "../../hooks/board.store";
 
 interface Props {
   isOpen: boolean;
@@ -11,6 +12,8 @@ interface Props {
 const PackViewModal = ({ isOpen, onClose, pack }: Props) => {
   const [flippedCardId, setFlippedCardId] = useState<string | null>(null);
 
+  const store = useReactiveBoardStore();
+
   const handleCardClick = (cardId: string) => {
     setFlippedCardId((prev) => (prev === cardId ? null : cardId));
   };
@@ -20,6 +23,15 @@ const PackViewModal = ({ isOpen, onClose, pack }: Props) => {
       setFlippedCardId(null);
     }
   }, [isOpen]);
+
+  const removePack = () => {
+    const index = store.cardsPacks.findIndex((p) => p.id === pack?.id);
+    if (index !== -1) {
+      onClose();
+      setFlippedCardId(null);
+      store.cardsPacks.splice(index, 1);
+    }
+  };
   return (
     <Modal
       isOpen={isOpen}
@@ -27,7 +39,17 @@ const PackViewModal = ({ isOpen, onClose, pack }: Props) => {
       className="p-4 w-full h-5/6 overflow-hidden"
       size="xl"
     >
-      <h1 className="font-semibold text-lg capitalize">{pack?.title}</h1>
+      <div className="flex justify-between items-center">
+        <h1 className="font-semibold text-lg capitalize">{pack?.title}</h1>
+        <div>
+          <button
+            onClick={removePack}
+            className="p-2 px-4 rounded-md text-red-500"
+          >
+            remove
+          </button>
+        </div>
+      </div>
       <div className="gap-3 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 py-4 pb-8 w-full h-full overflow-y-auto">
         {pack?.cards.map((card) => (
           <div
