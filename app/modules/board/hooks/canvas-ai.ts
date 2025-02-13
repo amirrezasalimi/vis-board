@@ -1,6 +1,6 @@
 import OpenAI from "openai";
 import { useReactiveBoardStore } from "./board.store";
-import type { ExtraNode, KnowledgeNodeData, MessageItem } from "../types/nodes";
+import type { KnowledgeNodeData, MessageItem } from "../types/nodes";
 import useOai from "./oai";
 import { makeId } from "~/shared/utils/id";
 import useLocalStore from "./local.store";
@@ -9,7 +9,7 @@ import type { Node } from "@xyflow/react";
 import { useState } from "react";
 import { xmlParse } from "../helpers/xml";
 
-const useAi = () => {
+const useCanvasAi = () => {
   const store = useReactiveBoardStore();
   const { getOai, model } = useOai();
   const branch = store.branches?.[store.config.activeBranch ?? ""];
@@ -341,4 +341,4 @@ raw text, maximum 4 paragraphs, no extra talk:
   };
 };
 
-export default useAi;
+export default useCanvasAi;

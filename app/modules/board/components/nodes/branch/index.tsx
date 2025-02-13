@@ -7,14 +7,14 @@ import remarkGfm from "remark-gfm";
 import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import NiceHandle from "../nice-handle";
-import useAi from "~/modules/board/hooks/ai";
+import useCanvasAi from "~/modules/board/hooks/canvas-ai";
 import Spinner from "~/assets/images/spinner.svg";
 import Note from "~/assets/images/note.svg";
 
 const BranchNode = (props: NodeProps<ExtraNode>) => {
   const data = props.data as BranchNodeData;
   const title = data.title || "";
-  const ai = useAi();
+  const ai = useCanvasAi();
   const { branches } = useReactiveBoardStore();
   const messages = branches[props.id]?.data.messages ?? [];
 
@@ -78,7 +78,7 @@ const BranchNode = (props: NodeProps<ExtraNode>) => {
       />
 
       <div className="z-50 flex justify-center w-full">
-        <h1 className="inline-block flex-grow-0 flex-shrink-0 justify-center items-center bg-[#FF7F7F] px-5 p-1 rounded-full w-auto text-[#5E3535]">
+        <h1 className="inline-block flex-grow-0 flex-shrink-0 justify-center items-center bg-[#FF7F7F] p-1 px-5 rounded-full w-auto text-[#5E3535]">
           {title}
         </h1>
       </div>
@@ -93,7 +93,7 @@ const BranchNode = (props: NodeProps<ExtraNode>) => {
 
         <div
           ref={messagesRef}
-          className="relative flex flex-col gap-2 px-2.5 rounded-md overflow-y-auto no-drag nopan nowheel size-full"
+          className="relative flex flex-col gap-2 px-2.5 rounded-md size-full overflow-y-auto no-drag nopan nowheel"
           onScroll={handleScroll}
         >
           {messages.map((message, index) => {
@@ -107,14 +107,14 @@ const BranchNode = (props: NodeProps<ExtraNode>) => {
             return (
               <div
                 key={message.id}
-                className="group relative z-10 flex gap-2 w-full"
+                className="group z-10 relative flex gap-2 w-full"
                 style={
                   {
                     "--connector-color": roleStyle?.border,
                   } as React.CSSProperties
                 }
               >
-                <div className="after:-right-2.5 before:-left-2.5 before:absolute after:absolute flex flex-col before:content-[''] after:content-[''] gap-2 before:bg-[var(--connector-color)] after:bg-[var(--connector-color)] w-full before:w-1 after:w-1 before:h-full after:h-full">
+                <div className="after:-right-2.5 before:-left-2.5 before:absolute after:absolute flex flex-col gap-2 before:bg-[var(--connector-color)] after:bg-[var(--connector-color)] w-full before:w-1 after:w-1 before:h-full after:h-full before:content-[''] after:content-['']">
                   <div
                     className="p-3 w-full"
                     style={{
@@ -133,7 +133,7 @@ const BranchNode = (props: NodeProps<ExtraNode>) => {
                       </Markdown>
                     </p>
                     <div
-                      className="group-hover:visible bottom-0 z-10 sticky flex justify-end invisible"
+                      className="group-hover:visible invisible bottom-0 z-10 sticky flex justify-end"
                       style={{
                         backgroundColor: roleStyle.bg,
                       }}
@@ -153,7 +153,7 @@ const BranchNode = (props: NodeProps<ExtraNode>) => {
                   onClick={() => {
                     deleteMessage(props.id, index);
                   }}
-                  className="group-hover:visible top-1 right-1 absolute text-red-400 text-xs cursor-pointer invisible"
+                  className="group-hover:visible invisible top-1 right-1 absolute text-red-400 text-xs cursor-pointer"
                 >
                   DELETE
                 </span>
@@ -167,7 +167,7 @@ const BranchNode = (props: NodeProps<ExtraNode>) => {
               return (
                 <button
                   key={followup}
-                  className="bg-[#FFE3C4] px-2 py-1 p-1 rounded-md text-[#A75B0E] text-sm"
+                  className="bg-[#FFE3C4] p-1 px-2 py-1 rounded-md text-[#A75B0E] text-sm"
                   onClick={() => {
                     ai.sendTextMessage(followup);
                   }}

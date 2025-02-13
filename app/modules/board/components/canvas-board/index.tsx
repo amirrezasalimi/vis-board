@@ -16,7 +16,7 @@ const nodeTypes: NodeTypes = {
 const nodeEdges: EdgeTypes = {
   default: VisEdge,
 };
-const BoardCanvas = () => {
+const CanvasBoard = () => {
   const { branches, knowledges, edges } = useReactiveBoardStore();
 
   const flatNodes = [
@@ -28,18 +28,16 @@ const BoardCanvas = () => {
   const g = calcNodesPosition(flatNodes as any, flatEdges);
 
   return (
-    <div className="z-0 absolute size-full">
-      <ReactFlow
-        nodeTypes={nodeTypes}
-        edgeTypes={nodeEdges}
-        fitView
-        minZoom={0.5}
-        maxZoom={1}
-        nodes={g.nodes ?? []}
-        edges={flatEdges}
-      />
-    </div>
+    <ReactFlow
+      nodeTypes={nodeTypes}
+      edgeTypes={nodeEdges}
+      fitView
+      minZoom={0.5}
+      maxZoom={1}
+      nodes={g.nodes ?? []}
+      edges={flatEdges}
+    />
   );
 };
 
-export default BoardCanvas;
+export default CanvasBoard;

@@ -1,11 +1,11 @@
 import { useLocalStorage } from "@uidotdev/usehooks";
-import useAi from "../../hooks/ai";
+import useCanvasAi from "../../hooks/canvas-ai";
 import VoiceInput from "../voice-input";
 import { useState } from "react";
 import VoicePlayer from "../voice-player";
 
 const MessageInputs = () => {
-  const ai = useAi();
+  const ai = useCanvasAi();
   const [mode, setMode] = useLocalStorage("mode", "text");
   const [text, setText] = useState("");
   return (
@@ -36,14 +36,14 @@ const MessageInputs = () => {
                 setText("");
               }
             }}
-            className="border-[#FFB380] border-2 bg-[#FFF5E6] p-2 rounded-md w-full h-full outline-none resize-none"
+            className="bg-[#FFF5E6] p-2 border-[#FFB380] border-2 rounded-md outline-none w-full h-full resize-none"
           />
         )}
       </div>
       <div className="group bottom-0 left-1/2 z-10 fixed flex justify-center w-32 h-6 -translate-x-1/2 select-none">
         <div
           onClick={() => setMode(mode === "voice" ? "text" : "voice")}
-          className="-bottom-4 group-hover:bottom-1 hover:bottom-1 absolute flex justify-center gap-2 bg-[#FFB380] px-2 py-1 rounded-md w-24 text-sm text-white capitalize transition-all cursor-pointer"
+          className="-bottom-4 group-hover:bottom-1 hover:bottom-1 absolute flex justify-center gap-2 bg-[#FFB380] px-2 py-1 rounded-md w-24 text-white text-sm capitalize transition-all cursor-pointer"
         >
           {mode}
         </div>

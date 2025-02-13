@@ -10,6 +10,7 @@ import {
   createUseReactiveStoreWithRoomId,
   createSyncedStoreWithRoomId,
 } from "./store";
+import type { CardPack } from "../types/card";
 
 export const boardPrefix = "board-";
 // Define the board schema extending BaseSchema
@@ -28,6 +29,7 @@ type BoardSchema = {
     [key: string]: Node<KnowledgeNodeData>;
   };
   edges: ExtraEdge[];
+  cardsPacks: CardPack[];
 };
 
 // Create the board store context
@@ -39,6 +41,7 @@ const boardSchema: Record<keyof BoardSchema, any> = {
   branches: {},
   knowledges: {},
   edges: [],
+  cardsPacks: [],
 };
 
 // Create board-specific hooks

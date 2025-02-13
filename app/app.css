@@ -21,6 +21,10 @@ body {
   }
 }
 
+body {
+  background: #fff5e6;
+}
+
 .markdown code {
   display: block;
   white-space: pre-wrap;
@@ -32,4 +36,24 @@ body {
 
 .react-flow__edge-path {
   stroke: #d8bfd8 !important;
+}
+
+.card-inner {
+  position: relative;
+  transform-style: preserve-3d;
+  width: 100%;
+  height: 100%;
+}
+
+.card-front,
+.card-back {
+  backface-visibility: hidden;
+}
+
+.card-back {
+  transform: rotateY(180deg);
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
 }

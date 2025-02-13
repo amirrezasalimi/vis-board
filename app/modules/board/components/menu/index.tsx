@@ -78,14 +78,15 @@ const Menu = () => {
   const chats = [...globalStore.chats].reverse();
 
   return (
-    <div className="top-2 left-2 z-10 fixed flex flex-col gap-1 border-[#ffc885]/70 bg-[#FFF5E6] px-2 border rounded-md">
+    <div className="top-2 left-2 z-10 fixed flex flex-col gap-1 bg-[#FFF5E6] px-2 border border-[#ffc885]/70 rounded-md">
       <div className="flex gap-1">
         <Popover
           isOpen={isMenuOpen}
           // onClickOutside={() => setIsMenuOpen(false)}
           positions={"bottom"}
+          align="center"
           content={
-            <div className="flex flex-col justify-between border-[#ffc885] bg-[#ffefd8] mx-2 mt-1 p-1 border rounded-md w-[200px] h-[60dvh]">
+            <div className="flex flex-col justify-between bg-[#ffefd8] mx-2 mt-1 p-1 border border-[#ffc885] rounded-md w-[200px] h-[60dvh]">
               <div>
                 <h2>Recent</h2>
                 {chats.map((chat) => (
@@ -106,7 +107,7 @@ const Menu = () => {
                         e.stopPropagation();
                         removeChat(chat.id);
                       }}
-                      className="group-hover:block border-[#FF7777] hidden bg-[#FFF5E6] hover:bg-[#ffefd8] px-2 border rounded-md text-[#FF7777]"
+                      className="group-hover:block hidden bg-[#FFF5E6] hover:bg-[#ffefd8] px-2 border border-[#FF7777] rounded-md text-[#FF7777]"
                     >
                       x
                     </div>
@@ -118,7 +119,7 @@ const Menu = () => {
                   onClick={() => {
                     nav("/");
                   }}
-                  className="border-[#ffc885] hover:bg-[#ffefd8] px-2 py-1 border rounded-md w-full text-sm"
+                  className="hover:bg-[#ffefd8] px-2 py-1 border border-[#ffc885] rounded-md w-full text-sm"
                 >
                   New
                 </button>

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Popover } from "react-tiny-popover";
 import useOai from "../../hooks/oai";
-import useAi from "../../hooks/ai";
+import useCanvasAi from "../../hooks/canvas-ai";
 import { debounce } from "../../helpers/debounce";
 import type { Model } from "openai/resources/models.mjs";
 
@@ -11,7 +11,7 @@ const Settings = () => {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
   const [models, setModels] = useState<Model[]>([]);
-  const ai = useAi();
+  const ai = useCanvasAi();
 
   const [loadingModels, setLoadingModels] = useState(false);
   const reloadModels = () => {
@@ -40,25 +40,25 @@ const Settings = () => {
       onClickOutside={() => setIsPopoverOpen(false)}
       positions={["top", "right"]} // preferred positions by priority
       content={
-        <div className="flex flex-col gap-2 border-[#ffc885] bg-[#ffefd8] mx-2 p-2 border rounded-xl w-[300px] h-[250px]">
+        <div className="z-20 flex flex-col gap-2 bg-[#ffefd8] mx-2 p-2 border border-[#ffc885] rounded-xl w-[300px] h-[250px]">
           <h2>Ai Config</h2>
           <input
             value={endpoint}
             onChange={(e) => setEndpoint(e.target.value)}
-            className="border-[#ffc885] bg-[#FFF5E6] px-2 py-2 border rounded-xl w-full text-sm outline-none"
+            className="bg-[#FFF5E6] px-2 py-2 border border-[#ffc885] rounded-xl outline-none w-full text-sm"
             type="text"
             placeholder="http://localhost:1234/v1"
           />
           <input
             value={apiKey}
             onChange={(e) => setApiKey(e.target.value)}
-            className="border-[#ffc885] bg-[#FFF5E6] px-2 py-2 border rounded-xl w-full text-sm outline-none"
+            className="bg-[#FFF5E6] px-2 py-2 border border-[#ffc885] rounded-xl outline-none w-full text-sm"
             type="text"
             placeholder="xx-1234"
           />
           {endpoint && !!models?.length && (
             <select
-              className="border-[#ffc885] bg-[#FFF5E6] px-2 py-2 border rounded-xl w-full text-sm outline-none"
+              className="bg-[#FFF5E6] px-2 py-2 border border-[#ffc885] rounded-xl outline-none w-full text-sm"
               value={model}
               onChange={(e) => setModel(e.target.value)}
             >

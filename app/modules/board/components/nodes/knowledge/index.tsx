@@ -7,11 +7,11 @@ import {
 import type { ExtraNode, KnowledgeNodeData } from "~/modules/board/types/nodes";
 import { useEffect, useRef, useState } from "react";
 import NiceHandle from "../nice-handle";
-import useAi from "~/modules/board/hooks/ai";
+import useCanvasAi from "~/modules/board/hooks/canvas-ai";
 
 const KnowledgehNode = ({ data, id, width, height }: NodeProps<ExtraNode>) => {
   const [isHovering, setIsHovering] = useState(false);
-  const ai = useAi();
+  const ai = useCanvasAi();
   const store = useReactiveBoardStore();
   const ydoc = useBoardStoreYDoc();
   const { content, title } = data as KnowledgeNodeData;
@@ -101,7 +101,7 @@ const KnowledgehNode = ({ data, id, width, height }: NodeProps<ExtraNode>) => {
       >
         <div className="absolute inset-0 flex flex-col p-2 size-full">
           <span
-            className="group-hover:visible top-1 right-2.5 absolute text-red-500 cursor-pointer invisible"
+            className="group-hover:visible invisible top-1 right-2.5 absolute text-red-500 cursor-pointer"
             onClick={() => remove()}
           >
             x
