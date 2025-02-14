@@ -25,7 +25,7 @@ const BoardInit = ({ id }: { id: string }) => {
 };
 
 export default function Home() {
-  const id = makeId(10);
+  const id = makeId(20);
   return (
     <GlobalStoreProvider>
       <BoardInit id={id} />
