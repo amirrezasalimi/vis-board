@@ -6,7 +6,7 @@ import VoicePlayer from "../voice-player";
 
 const MessageInputs = () => {
   const ai = useCanvasAi();
-  const [mode, setMode] = useLocalStorage("mode", "text");
+  const [mode, setMode] = useLocalStorage("input-mode", "text");
   const [text, setText] = useState("");
   return (
     <div>

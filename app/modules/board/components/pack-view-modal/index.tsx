@@ -68,7 +68,7 @@ const PackViewModal = ({ isOpen, onClose, pack }: Props) => {
               </div>
               {/* Back of the card */}
               <div className="absolute inset-0 overflow-y-auto text-sm rotate-y-180 card-back transform">
-                <p className="flex justify-center items-center m-1 size-full">
+                <p className="flex justify-center items-center px-2 size-full">
                   {card.description}
                 </p>
               </div>
