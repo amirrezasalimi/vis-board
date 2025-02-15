@@ -2,7 +2,10 @@
 
 ### Deep dive into anything with Vis Board!
 
-#### Preview:
+#### Flash card:
+[preview](https://github.com/user-attachments/assets/cf4a8aa0-10ee-47a7-9215-9708a4d6ffff
+)
+#### research Canvas:
 
 ![preview](shot.png)
 
