@@ -203,7 +203,7 @@ const AddCardsPack = () => {
       </Modal>
       <button
         onClick={() => setIsOpen(true)}
-        className="bottom-6 left-1/2 z-20 fixed bg-[#FF7F7F] hover:bg-[#e67272] px-8 py-3 rounded-full text-white text-lg hover:scale-105 transition-all -translate-x-1/2"
+        className="bg-[#FF7F7F] hover:bg-[#e67272] px-8 py-2 rounded-full outline-none text-white text-lg hover:scale-105 transition-all"
       >
         Add
       </button>

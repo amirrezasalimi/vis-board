@@ -24,13 +24,14 @@ const CardBoard = () => {
       />
 
       {/* search */}
-      <div>
+      <div className="flex justify-between items-center">
         <input
           placeholder="Search..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="bg-[#FFEED5] bg-transparent p-2 px-4 rounded-md outline-none w-1/4"
         />
+        <AddCardsPack />
       </div>
       {searchTerm.length > 0 && (
         <div className="flex items-center gap-2">
@@ -49,8 +50,6 @@ const CardBoard = () => {
           </div>
         ))}
       </div>
-
-      <AddCardsPack />
     </div>
   );
 };
