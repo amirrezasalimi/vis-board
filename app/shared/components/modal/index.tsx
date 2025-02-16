@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, type ReactNode } from "react";
+import React, { useEffect, useRef, type ReactNode, useCallback } from "react";
 
 interface ModalProps {
   isOpen: boolean;
@@ -7,6 +7,8 @@ interface ModalProps {
   className?: string;
   children: ReactNode;
 }
+
+const modalStack: (() => void)[] = [];
 
 const Modal: React.FC<ModalProps> = ({
   isOpen,
@@ -17,13 +19,29 @@ const Modal: React.FC<ModalProps> = ({
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
+  const handleEscape = useCallback((e: KeyboardEvent) => {
+    if (e.key === "Escape") {
+      if (modalStack.length > 0) {
+        const topModalClose = modalStack[modalStack.length - 1];
+        topModalClose();
+      }
+    }
+  }, []);
+
   useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+    if (isOpen) {
+      modalStack.push(onClose);
+      document.addEventListener("keydown", handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+      const index = modalStack.indexOf(onClose);
+      if (index > -1) {
+        modalStack.splice(index, 1);
+      }
     };
-    if (isOpen) document.addEventListener("keydown", handleEscape);
-    return () => document.removeEventListener("keydown", handleEscape);
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, handleEscape]);
 
   if (!isOpen) return null;
 
