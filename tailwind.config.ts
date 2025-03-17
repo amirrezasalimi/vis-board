@@ -31,6 +31,7 @@ export default {
     },
   },
   plugins: [
+    // @ts-ignore
     function ({ addUtilities }) {
       const newUtilities = {
         ".rotate-y-180": {
