@@ -2,12 +2,11 @@ import { useState, useRef, useEffect } from "react";
 import { getBoardStore, useReactiveBoardStore } from "../../hooks/board.store";
 import { Popover } from "react-tiny-popover";
 import { useReactiveGlobalStore } from "../../hooks/global.store";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 const Menu = () => {
   const { config } = useReactiveBoardStore();
   const globalStore = useReactiveGlobalStore();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const nav = useNavigate();
@@ -48,7 +47,6 @@ const Menu = () => {
     // on escape
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        setIsMenuOpen(false);
         setIsEditing(false);
       }
     };
@@ -80,62 +78,12 @@ const Menu = () => {
   return (
     <div className="top-2 left-2 z-10 fixed flex flex-col gap-1 bg-[#FFF5E6] px-2 border border-[#ffc885]/70 rounded-md">
       <div className="flex gap-1">
-        <Popover
-          isOpen={isMenuOpen}
-          // onClickOutside={() => setIsMenuOpen(false)}
-          positions={"bottom"}
-          align="center"
-          content={
-            <div className="flex flex-col justify-between bg-[#ffefd8] mx-2 mt-1 p-1 border border-[#ffc885] rounded-md w-[200px] h-[60dvh]">
-              <div>
-                <h2>Recent</h2>
-                {chats.map((chat) => (
-                  <div
-                    onClick={() => {
-                      document.location.href = `/board/${chat.id}`;
-                    }}
-                    key={chat.id}
-                    className="group flex justify-between items-center hover:bg-[#ffc885] px-2 py-1 rounded-md cursor-pointer"
-                  >
-                    <div className="flex items-center gap-1">
-                      <div className="bg-[#FF7777] rounded-full w-1 h-1"></div>
-                      <span>{chat.title}</span>
-                    </div>
-                    <div
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        removeChat(chat.id);
-                      }}
-                      className="group-hover:block hidden bg-[#FFF5E6] hover:bg-[#ffefd8] px-2 border border-[#FF7777] rounded-md text-[#FF7777]"
-                    >
-                      x
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div>
-                <button
-                  onClick={() => {
-                    nav("/");
-                  }}
-                  className="hover:bg-[#ffefd8] px-2 py-1 border border-[#ffc885] rounded-md w-full text-sm"
-                >
-                  New
-                </button>
-              </div>
-            </div>
-          }
-        >
-          <h2
-            className={`text-[#FF7777] text-md cursor-pointer select-none ${
-              isMenuOpen ? "underline" : ""
-            }`}
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
+        <Link to={"/"}>
+          <h2 className={`text-[#FF7777] text-md cursor-pointer select-none`}>
             Vis board/
           </h2>
-        </Popover>
+        </Link>
+
         <input
           ref={inputRef}
           className={`text-[#FF7777]/90 max-w-32 outline-none bg-[#FFF5E6] ${

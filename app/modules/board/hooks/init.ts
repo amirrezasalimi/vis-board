@@ -1,48 +1,39 @@
-import { makeId } from "~/shared/utils/id";
-import { useReactiveBoardStoreWithRoom } from "./board.store";
+import { getBoardStore, useReactiveBoardStoreWithRoom } from "./board.store";
 import { useReactiveGlobalStore } from "./global.store";
+import { BoardService } from "../services/board.service";
 
-const useIniter = (boardId: string) => {
-  const store = useReactiveBoardStoreWithRoom(boardId);
+const useIniter = () => {
   const globalStore = useReactiveGlobalStore();
-  const init = () => {
-    if (!store) {
-      return;
-    }
 
-    let { branches, config } = store;
-    if (config?.isInitialized) {
-      return;
+  const init = async (boardId: string) => {
+    const { store } = getBoardStore(boardId);
+
+    try {
+      // If already initialized, just return
+      if (store?.config?.isInitialized) {
+        return true;
+      }
+
+      // Get existing chat data if available
+      const existingChat = globalStore.chats.find(
+        (chat) => chat.id === boardId
+      );
+      if (!existingChat) {
+        throw new Error("Board not found");
+      }
+
+      // Initialize the board with existing data
+      const boardData = BoardService.createBoard(boardId, existingChat.title);
+      Object.assign(store.branches, boardData.branches);
+      Object.assign(store.config, boardData.config);
+
+      return true;
+    } catch (error) {
+      console.error("Board initialization failed:", error);
+      throw error;
     }
-    // init branch
-    const branchId = "main-branch";
-    config.activeBranch = branchId;
-    branches[branchId] = {
-      type: "branch",
-      id: branchId,
-      data: {
-        title: "Main",
-        messages: [
-          {
-            id: makeId(),
-            content: "Hey, How can i Help you?!",
-            role: "assistant",
-            timestamp: Date.now(),
-            token_per_second: 0,
-            took_seconds: 0,
-            followups: [],
-          },
-        ],
-      },
-      position: { x: 0, y: 0 },
-    };
-    config.id = boardId;
-    config.title = "Untitled";
-    config.version = "0.1";
-    config.activeBranch = branchId;
-    config.isInitialized = true;
-    globalStore.chats.push({ id: boardId, title: config.title });
   };
+
   return { init };
 };
 
