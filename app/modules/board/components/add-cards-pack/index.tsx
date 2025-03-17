@@ -11,8 +11,13 @@ import { makeId } from "~/shared/utils/id";
 import { HexColorPicker } from "react-colorful";
 import { Popover } from "react-tiny-popover";
 
-const AddCardsPack = () => {
-  const [isOpen, setIsOpen] = useState(false);
+interface AddCardsPackProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const AddCardsPack = ({ isOpen, onClose }: AddCardsPackProps) => {
+  const store = useReactiveBoardStore();
   const [color, setColor] = useState("#7EBFE6");
   const [isColorOpen, setIsColorOpen] = useState(false);
   const [title, setTitle] = useState("My Pack");
@@ -20,7 +25,6 @@ const AddCardsPack = () => {
   const [cards, setCards] = useState<Card[]>([]);
   const [description, setDescription] = useState("");
   const ai = useCardsAi();
-  const store = useReactiveBoardStore();
   const doc = useBoardStoreYDoc();
   const [modalIsLoaded, setModalIsLoaded] = useState(false);
   const [editCardIndex, setEditCardIndex] = useState<number | null>(null);
@@ -47,7 +51,13 @@ const AddCardsPack = () => {
       timestamp: 0,
       gradient_color: color,
     });
-    setIsOpen(false);
+    onClose();
+    // reset state
+    setCards([]);
+    setTitle("My Pack");
+    setDescription("");
+    setCount(10);
+    setColor("#7EBFE6");
   };
   const popoverRef = useRef(null);
 
@@ -80,7 +90,7 @@ const AddCardsPack = () => {
         className="p-6 h-[90vh] overflow-hidden card-pack-modal"
         size="lg"
         isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
+        onClose={onClose}
       >
         <div
           className="flex flex-col gap-6 w-full h-full overflow-hidden"
@@ -201,12 +211,7 @@ const AddCardsPack = () => {
           </div>
         </div>
       </Modal>
-      <button
-        onClick={() => setIsOpen(true)}
-        className="bg-[#FF7F7F] hover:bg-[#e67272] px-8 py-2 rounded-full outline-none text-white text-lg hover:scale-105 transition-all"
-      >
-        Add
-      </button>
+
       {editCardIndex !== null && (
         <Modal
           className="p-6"
