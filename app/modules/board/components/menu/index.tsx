@@ -20,23 +20,6 @@ const Menu = () => {
       inputRef.current?.blur();
     }
   };
-  const removeChat = (id: string) => {
-    const index = globalStore.chats.findIndex((chat) => chat.id === id);
-    if (index !== -1) {
-      // clear data
-      globalStore.chats.splice(index, 1);
-      const boardStore = getBoardStore(id);
-      boardStore.persistence?.clearData();
-    }
-    // old chats
-    const lastChat = globalStore.chats[globalStore.chats.length - 1];
-    if (lastChat) {
-      document.location.href = `/board/${lastChat.id}`;
-    } else {
-      document.location.href = "/";
-    }
-  };
-
   useEffect(() => {
     if (config.title) {
       document.title = config.title;
