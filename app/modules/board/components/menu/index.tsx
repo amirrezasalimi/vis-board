@@ -9,7 +9,6 @@ const Menu = () => {
   const globalStore = useReactiveGlobalStore();
   const [isEditing, setIsEditing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const nav = useNavigate();
 
   const handleBlur = () => {
     setIsEditing(false);
