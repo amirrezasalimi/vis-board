@@ -13,6 +13,11 @@ import rehypeSanitize from "rehype-sanitize";
 import remarkBreaks from "remark-breaks";
 import rehypeSlug from "rehype-slug";
 import "@fontsource/vazirmatn";
+import "@fontsource/vazirmatn/300";
+import "@fontsource/vazirmatn/500";
+import "@fontsource/vazirmatn/600";
+import "@fontsource/vazirmatn/700";
+import "@fontsource/vazirmatn/800";
 
 GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
@@ -72,6 +77,39 @@ const BooksBoard = () => {
     }
   }, [currentPage, autoTranslate, numPages]);
 
+  // Add new function to extract structured content from page
+  const extractStructuredContent = (pageElement: Element): any => {
+    const textElements = Array.from(
+      pageElement.querySelectorAll(".textLayer > span")
+    );
+
+    if (textElements.length === 0) return { type: "empty" };
+
+    // Group text elements by their vertical position to identify paragraphs
+    const lineGroups: { [key: string]: string[] } = {};
+    textElements.forEach((el) => {
+      const rect = el.getBoundingClientRect();
+      const key = Math.round(rect.top);
+      if (!lineGroups[key]) lineGroups[key] = [];
+      if (el.textContent) lineGroups[key].push(el.textContent.trim());
+    });
+
+    // Convert to structured format
+    const structure = Object.entries(lineGroups)
+      .sort(([a], [b]) => parseInt(a) - parseInt(b))
+      .map(([_, texts]) => {
+        const line = texts.join(" ").trim();
+        // Detect if this might be a heading based on length
+        if (line.length < 100 && line.endsWith(".") === false) {
+          return { type: "heading", content: line };
+        }
+        return { type: "paragraph", content: line };
+      })
+      .filter((item) => item.content.length > 0);
+
+    return structure;
+  };
+
   const translatePage = async (pageNumber: number) => {
     // Skip if already translating or completed
     if (
@@ -90,32 +128,27 @@ const BooksBoard = () => {
       },
     }));
 
-    const pageElement = document.querySelector(`.page-${pageNumber}`);
-    if (!pageElement) {
-      // Reset status if page element not found
-      setTranslations((prev) => ({
-        ...prev,
-        [pageNumber]: {
-          ...(prev[pageNumber] || { content: "", translation: "" }),
-          status: "idle",
-        },
-      }));
-      return;
-    }
-
     try {
-      const textElements = Array.from(
-        pageElement.querySelectorAll(".textLayer > span")
-      );
-      if (textElements.length === 0) return;
+      const pageElement = document.querySelector(`.page-${pageNumber}`);
+      if (!pageElement) {
+        // Reset status if page element not found
+        setTranslations((prev) => ({
+          ...prev,
+          [pageNumber]: {
+            ...(prev[pageNumber] || { content: "", translation: "" }),
+            status: "idle",
+          },
+        }));
+        return;
+      }
 
-      const pageContent = textElements
-        .map((el) => el.textContent?.trim())
-        .filter(Boolean)
-        .join(" ")
-        .trim();
+      // Extract structured content instead of raw text
+      const structuredContent = extractStructuredContent(pageElement);
 
-      if (!pageContent) {
+      if (
+        structuredContent.length === 0 ||
+        structuredContent.type === "empty"
+      ) {
         // Reset status if no content
         setTranslations((prev) => ({
           ...prev,
@@ -127,6 +160,11 @@ const BooksBoard = () => {
         return;
       }
 
+      // Save the raw content for reference
+      const pageContent = structuredContent
+        .map((item) => item.content)
+        .join("\n\n");
+
       const oai = getOai();
       const response = await oai.chat.completions.create({
         model: model,
@@ -134,7 +172,7 @@ const BooksBoard = () => {
           {
             role: "system",
             content:
-              "You are a translator. Translate the following text to Persian. in markdown format, Keep the translation natural and maintain the original meaning.",
+              "You are a translator. Translate the following structured text to Persian in markdown format. Keep the translation natural and maintain the original structure and meaning. Headings should remain as headings in the output.",
           },
           {
             role: "user",
@@ -144,6 +182,7 @@ const BooksBoard = () => {
       });
 
       const translation = response.choices[0]?.message?.content;
+      console.log("Translation response:", translation);
 
       if (translation) {
         setTranslations((prev) => ({
