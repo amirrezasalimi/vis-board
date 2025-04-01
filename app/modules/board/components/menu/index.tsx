@@ -68,7 +68,7 @@ const Menu = () => {
 
         <input
           ref={inputRef}
-          className={`text-[#FF7777]/90 max-w-32 outline-none bg-[#FFF5E6] ${
+          className={`text-[#FF7777]/90 max-w-32 outline-hidden bg-[#FFF5E6] ${
             isEditing ? "font-semibold" : ""
           }`}
           value={config.title || "Untitled"}

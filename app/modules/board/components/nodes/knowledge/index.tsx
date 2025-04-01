@@ -110,13 +110,13 @@ const KnowledgehNode = ({ data, id, width, height }: NodeProps<ExtraNode>) => {
             type="target"
             id="right"
             position={Position.Right}
-            className="!-right-1.5"
+            className="-right-1.5!"
           />
           <NiceHandle
             type={node.data.side === "left" ? "source" : "target"}
             id="left"
             position={Position.Left}
-            className="!-left-1.5"
+            className="-left-1.5!"
           />
 
           {title && <div className="font-semibold">{title}</div>}
@@ -131,7 +131,7 @@ const KnowledgehNode = ({ data, id, width, height }: NodeProps<ExtraNode>) => {
             minHeight={NODE_SIZES.knowledge[1]}
             nodeId={id}
             position="bottom-right"
-            className="!top-[unset] !right-2 !bottom-2 !left-[unset] z-10 !absolute !bg-transparent !border-none"
+            className="top-[unset]! right-2! bottom-2! left-[unset]! z-10 absolute! bg-transparent! border-none!"
             onResize={(_, params) => handleResize(params.width, params.height)}
           >
             <svg

@@ -47,7 +47,7 @@ const CardBoard = () => {
             placeholder="Search packs..."
             value={searchTerm}
             onChange={(e) => handleSearch(e.target.value)}
-            className={`bg-[#FFEED5] pl-10 pr-4 py-2 rounded-md outline-none w-full transition-colors
+            className={`bg-[#FFEED5] pl-10 pr-4 py-2 rounded-md outline-hidden w-full transition-colors
               ${
                 searchError
                   ? "border-2 border-red-400"
@@ -69,7 +69,7 @@ const CardBoard = () => {
             setCurrentPack(null);
             setIsAddModalOpen(true);
           }}
-          className="bg-[#FF7F7F] hover:bg-[#e67272] px-8 py-2 rounded-full outline-none text-white text-lg hover:scale-105 transition-all"
+          className="bg-[#FF7F7F] hover:bg-[#e67272] px-8 py-2 rounded-full outline-hidden text-white text-lg hover:scale-105 transition-all"
         >
           Add
         </button>
@@ -77,7 +77,7 @@ const CardBoard = () => {
       {searchTerm.length > 0 && !searchError && (
         <div className="flex items-center gap-2">
           <span className="text-gray-400 text-sm">Search results for</span>
-          <span className="bg-[#FFEED5] px-2 py-0.5 rounded font-semibold text-sm">
+          <span className="bg-[#FFEED5] px-2 py-0.5 rounded-sm font-semibold text-sm">
             {searchTerm}
           </span>
         </div>

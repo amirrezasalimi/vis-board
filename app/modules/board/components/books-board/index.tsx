@@ -23,8 +23,24 @@ GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
   import.meta.url
 ).toString();
+
+// Define type for translation cache
+interface TranslationCache {
+  [filename: string]: {
+    language: string;
+    translations: {
+      [page: number]: {
+        content: string;
+        translation: string;
+        status: "idle" | "translating" | "completed";
+      };
+    };
+  };
+}
+
 const BooksBoard = () => {
   const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const [fileName, setFileName] = useState<string>("");
   const [numPages, setNumPages] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [translations, setTranslations] = useState<{
@@ -38,12 +54,94 @@ const BooksBoard = () => {
   const [showTranslation, setShowTranslation] = useState(true);
   const [autoTranslate, setAutoTranslate] = useState(false);
   const [translationProgress, setTranslationProgress] = useState(0);
+  const [targetLanguage, setTargetLanguage] = useState<string>("Persian");
   const { getOai, model } = useOai();
+
+  // Load translations from cache when file is loaded
+  useEffect(() => {
+    if (pdfFile && fileName) {
+      loadTranslationsFromCache();
+    }
+  }, [pdfFile, fileName, targetLanguage]);
+
+  // Save translations to cache whenever they change
+  useEffect(() => {
+    if (pdfFile && fileName && Object.keys(translations).length > 0) {
+      saveTranslationsToCache();
+    }
+  }, [translations, fileName, targetLanguage]);
+
+  const saveTranslationsToCache = () => {
+    try {
+      const cacheKey = "pdf-translations-cache";
+      const existingCache = localStorage.getItem(cacheKey);
+      let cache: TranslationCache = existingCache
+        ? JSON.parse(existingCache)
+        : {};
+
+      // Update cache with current translations
+      cache[fileName] = {
+        language: targetLanguage,
+        translations: translations,
+      };
+
+      localStorage.setItem(cacheKey, JSON.stringify(cache));
+      console.log("Translations saved to cache");
+    } catch (error) {
+      console.error("Failed to save translations to cache:", error);
+    }
+  };
+
+  const loadTranslationsFromCache = () => {
+    try {
+      const cacheKey = "pdf-translations-cache";
+      const existingCache = localStorage.getItem(cacheKey);
+
+      if (existingCache) {
+        const cache: TranslationCache = JSON.parse(existingCache);
+
+        if (cache[fileName] && cache[fileName].language === targetLanguage) {
+          setTranslations(cache[fileName].translations);
+          console.log("Translations loaded from cache");
+
+          // Update progress based on loaded translations
+          if (numPages > 0) {
+            const completedPages = Object.values(
+              cache[fileName].translations
+            ).filter((t) => t.status === "completed").length;
+            setTranslationProgress(
+              Math.round((completedPages / numPages) * 100)
+            );
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Failed to load translations from cache:", error);
+    }
+  };
+
+  const clearTranslationsCache = () => {
+    try {
+      if (
+        window.confirm(
+          "Are you sure you want to clear all cached translations?"
+        )
+      ) {
+        localStorage.removeItem("pdf-translations-cache");
+        setTranslations({});
+        setTranslationProgress(0);
+        console.log("Translations cache cleared");
+      }
+    } catch (error) {
+      console.error("Failed to clear translations cache:", error);
+    }
+  };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file && file.type === "application/pdf") {
       setPdfFile(file);
+      setFileName(file.name);
       // Reset translations when new file is loaded
       setTranslations({});
       setTranslationProgress(0);
@@ -171,8 +269,7 @@ const BooksBoard = () => {
         messages: [
           {
             role: "system",
-            content:
-              "You are a translator. Translate the following structured text to Persian in markdown format. Keep the translation natural and maintain the original structure and meaning. Headings should remain as headings in the output.",
+            content: `You are a translator. Translate the following structured text to ${targetLanguage} in markdown format. Keep the translation natural and maintain the original structure and meaning. Headings should remain as headings in the output.`,
           },
           {
             role: "user",
@@ -300,7 +397,7 @@ const BooksBoard = () => {
               <ReactMarkdown
                 remarkPlugins={[remarkGfm, remarkBreaks]}
                 rehypePlugins={[rehypeRaw, rehypeSanitize, rehypeSlug]}
-                className="dark:prose-invert p-2 w-full max-w-none font-[Vazirmatn] break-words whitespace-pre-wrap prose prose-sm md:prose-base lg:prose-lg prose-stone"
+                className="prose-ol:space-y-0 prose-ul:space-y-0 prose-blockquote:bg-gray-50 prose-blockquote:shadow-sm [&>*]:my-1 prose-h1:my-2 prose-li:my-0 prose-ol:my-1 prose-p:my-1 prose-ul:my-1 p-2 prose-blockquote:p-4 prose-blockquote:border-gray-300 prose-blockquote:border-l-4 prose-blockquote:rounded-lg max-w-none font-[Vazirmatn] prose-headings:font-[Vazirmatn] prose-p:font-[Vazirmatn] prose-h1:font-bold prose-a:text-blue-600 text-sm md:text-base lg:text-lg prose-h1:text-lg hover:prose-a:underline prose-a:no-underline prose-li:leading-snug prose-p:leading-snug prose prose-stone"
               >
                 {pageTranslation.translation}
               </ReactMarkdown>
@@ -322,7 +419,7 @@ const BooksBoard = () => {
         <div className="flex flex-col gap-3 bg-white shadow-lg p-3 border rounded-lg">
           <div className="flex flex-wrap items-center gap-2">
             {/* File selector */}
-            <label className="bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded text-white text-sm cursor-pointer">
+            <label className="bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded-sm text-white text-sm cursor-pointer">
               Select PDF
               <input
                 type="file"
@@ -334,7 +431,7 @@ const BooksBoard = () => {
 
             {/* Page counter */}
             {numPages > 0 && (
-              <div className="bg-gray-200 px-3 py-1 rounded text-sm">
+              <div className="bg-gray-200 px-3 py-1 rounded-sm text-sm">
                 {currentPage}/{numPages}
               </div>
             )}
@@ -342,7 +439,7 @@ const BooksBoard = () => {
             {/* Translation controls */}
             <button
               onClick={() => setShowTranslation(!showTranslation)}
-              className="bg-purple-500 hover:bg-purple-600 px-3 py-1 rounded text-white text-sm"
+              className="bg-purple-500 hover:bg-purple-600 px-3 py-1 rounded-sm text-white text-sm"
             >
               {showTranslation ? "Hide" : "Show"}
             </button>
@@ -358,6 +455,20 @@ const BooksBoard = () => {
             >
               Translate
             </button>
+
+            {/* Language selector */}
+            <select
+              value={targetLanguage}
+              onChange={(e) => setTargetLanguage(e.target.value)}
+              className="bg-white px-2 py-1 border border-gray-300 rounded text-sm"
+            >
+              <option value="Persian">Persian</option>
+              <option value="Arabic">Arabic</option>
+              <option value="Chinese">Chinese</option>
+              <option value="French">French</option>
+              <option value="German">German</option>
+              <option value="Spanish">Spanish</option>
+            </select>
 
             {/* Auto-translate toggle */}
             <div className="flex items-center gap-2">
@@ -375,6 +486,29 @@ const BooksBoard = () => {
                 />
               </button>
             </div>
+
+            {/* Clear cache button */}
+            <button
+              onClick={clearTranslationsCache}
+              className="flex items-center bg-red-500 hover:bg-red-600 px-2 py-1 rounded-sm text-white text-xs"
+              title="Clear cached translations"
+            >
+              <svg
+                className="mr-1 w-3 h-3"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/200/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                />
+              </svg>
+              Cache
+            </button>
           </div>
         </div>
       </div>
@@ -385,7 +519,7 @@ const BooksBoard = () => {
             <Document
               file={pdfFile}
               onLoadSuccess={({ numPages }) => setNumPages(numPages)}
-              className="flex flex-col items-center !shadow-none h-full"
+              className="flex flex-col items-center shadow-none! h-full"
             >
               <List
                 height={window.innerHeight - 80}
@@ -399,14 +533,14 @@ const BooksBoard = () => {
                     : window.innerWidth - 48
                 }
                 overscanCount={2}
-                className="bg-white shadow-sm p-4 rounded-lg"
+                className="bg-white shadow-xs p-4 rounded-lg"
               >
                 {PageRow}
               </List>
             </Document>
           </div>
         ) : (
-          <div className="flex justify-center items-center bg-white shadow-sm mt-8 p-12 border rounded-lg w-full max-w-3xl">
+          <div className="flex justify-center items-center bg-white shadow-xs mt-8 p-12 border rounded-lg w-full max-w-3xl">
             <p className="text-gray-500 text-center">
               Please select a PDF file to begin
             </p>

@@ -16,7 +16,7 @@ const CardPack = ({
 
   return (
     <div
-      className={`relative flex flex-col justify-between px-2 pt-10 pb-4 rounded-xl outline-none aspect-[1/1.26] overflow-hidden text-white text-center hover:scale-[1.03] transition-transform cursor-pointer ${className}`}
+      className={`relative flex flex-col justify-between px-2 pt-10 pb-4 rounded-xl outline-hidden aspect-[1/1.26] overflow-hidden text-white text-center hover:scale-[1.03] transition-transform cursor-pointer ${className}`}
       style={{
         backgroundImage: `radial-gradient(circle, ${lighterColor.toRgbString()} 0%, ${color.toRgbString()} 100%)`,
       }}

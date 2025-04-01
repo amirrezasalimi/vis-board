@@ -116,7 +116,7 @@ const AddCardsPack = ({ isOpen, onClose }: AddCardsPackProps) => {
                   placeholder="Title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="px-4 py-2 border-2 border-gray-300 rounded-md outline-none w-3/5 h-12 text-lg"
+                  className="px-4 py-2 border-2 border-gray-300 rounded-md outline-hidden w-3/5 h-12 text-lg"
                 />
                 <div className="flex items-center gap-3 w-2/5">
                   <span className="text-lg">Count:</span>
@@ -124,7 +124,7 @@ const AddCardsPack = ({ isOpen, onClose }: AddCardsPackProps) => {
                     type="number"
                     value={count}
                     onChange={(e) => setCount(Number(e.target.value))}
-                    className="px-3 py-2 border-2 border-gray-300 rounded-md outline-none w-full text-lg text-center"
+                    className="px-3 py-2 border-2 border-gray-300 rounded-md outline-hidden w-full text-lg text-center"
                   />
                 </div>
                 <div className="flex items-center gap-3 w-1/5">
@@ -137,7 +137,7 @@ const AddCardsPack = ({ isOpen, onClose }: AddCardsPackProps) => {
                       parentElement={popoverRef.current || undefined}
                       content={
                         <HexColorPicker
-                          className="z-[1000] p-4"
+                          className="z-1000 p-4"
                           color={color}
                           onChange={setColor}
                         />
@@ -157,7 +157,7 @@ const AddCardsPack = ({ isOpen, onClose }: AddCardsPackProps) => {
                 rows={5}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="px-4 py-2 border-2 border-gray-300 rounded-md outline-none w-full text-lg"
+                className="px-4 py-2 border-2 border-gray-300 rounded-md outline-hidden w-full text-lg"
               />
               <div className="flex gap-4">
                 <button
@@ -226,14 +226,14 @@ const AddCardsPack = ({ isOpen, onClose }: AddCardsPackProps) => {
               placeholder="Title"
               value={editCardTitle}
               onChange={(e) => setEditCardTitle(e.target.value)}
-              className="px-4 py-2 border-2 border-gray-300 rounded-md outline-none w-full text-lg"
+              className="px-4 py-2 border-2 border-gray-300 rounded-md outline-hidden w-full text-lg"
             />
             <textarea
               placeholder="Description"
               rows={5}
               value={editCardDescription}
               onChange={(e) => setEditCardDescription(e.target.value)}
-              className="px-4 py-2 border-2 border-gray-300 rounded-md outline-none w-full text-lg"
+              className="px-4 py-2 border-2 border-gray-300 rounded-md outline-hidden w-full text-lg"
             />
             <button
               onClick={handleSaveCard}

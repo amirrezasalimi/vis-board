@@ -73,8 +73,8 @@ const PackViewModal = ({ isOpen, onClose, pack }: Props) => {
             >
               {/* Front of the card */}
               <div className="absolute inset-0 flex flex-col justify-center items-center bg-white shadow-lg border-2 border-gray-100 rounded-xl backface-hidden">
-                <div className="top-0 left-0 absolute bg-gradient-to-r from-blue-400 to-purple-500 rounded-t-xl w-full h-2"></div>
-                <div className="flex justify-center items-center bg-gradient-to-br from-blue-100 to-blue-50 mb-3 rounded-full w-12 h-12">
+                <div className="top-0 left-0 absolute bg-linear-to-r from-blue-400 to-purple-500 rounded-t-xl w-full h-2"></div>
+                <div className="flex justify-center items-center bg-linear-to-br from-blue-100 to-blue-50 mb-3 rounded-full w-12 h-12">
                   <span className="text-blue-500 text-xl">📝</span>
                 </div>
                 <h3 className="px-4 font-medium text-gray-800 text-lg text-center">
@@ -87,12 +87,12 @@ const PackViewModal = ({ isOpen, onClose, pack }: Props) => {
 
               {/* Back of the card */}
               <div className="absolute inset-0 bg-white shadow-lg border-2 border-gray-100 rounded-xl overflow-y-auto rotate-y-180 backface-hidden">
-                <div className="top-0 left-0 absolute bg-gradient-to-r from-purple-400 to-pink-500 rounded-t-xl w-full h-2"></div>
+                <div className="top-0 left-0 absolute bg-linear-to-r from-purple-400 to-pink-500 rounded-t-xl w-full h-2"></div>
                 <div className="flex flex-col p-5 h-full">
                   <h4 className="mb-2 font-medium text-gray-700 text-base">
                     {card.title}
                   </h4>
-                  <div className="flex-grow overflow-y-auto">
+                  <div className="grow overflow-y-auto">
                     <p className="text-gray-600 text-sm leading-relaxed">
                       {card.description}
                     </p>

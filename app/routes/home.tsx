@@ -124,7 +124,7 @@ const Dashboard = () => {
                               e.stopPropagation();
                               deleteBoard(board.id);
                             }}
-                            className="bg-red-500 hover:bg-red-600 px-2 py-1 rounded text-white text-sm"
+                            className="bg-red-500 hover:bg-red-600 px-2 py-1 rounded-sm text-white text-sm"
                           >
                             Delete
                           </button>
@@ -133,7 +133,7 @@ const Dashboard = () => {
                               e.stopPropagation();
                               setDeleteTargetId(null);
                             }}
-                            className="hover:bg-gray-100 px-2 py-1 rounded text-gray-600 text-sm"
+                            className="hover:bg-gray-100 px-2 py-1 rounded-sm text-gray-600 text-sm"
                           >
                             Cancel
                           </button>
@@ -239,7 +239,7 @@ const Dashboard = () => {
             placeholder="Project name"
             value={projectName}
             onChange={(e) => setProjectName(e.target.value)}
-            className="mb-4 p-2 border border-[#ffc885]/30 focus:border-[#FF7777]/50 rounded-md outline-none w-full"
+            className="mb-4 p-2 border border-[#ffc885]/30 focus:border-[#FF7777]/50 rounded-md outline-hidden w-full"
             autoFocus
             onKeyDown={(e) => {
               if (e.key === "Enter") {

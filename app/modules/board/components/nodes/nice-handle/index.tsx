@@ -7,7 +7,7 @@ const NiceHandle = (props: Props) => {
   return (
     <Handle
       {...props}
-      className={`${props.className} !size-2 !border-none !bg-[#D8BFD8]`}
+      className={`${props.className} size-2! border-none! bg-[#D8BFD8]!`}
     />
   );
 };

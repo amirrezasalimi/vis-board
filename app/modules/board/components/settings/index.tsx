@@ -45,20 +45,20 @@ const Settings = () => {
           <input
             value={endpoint}
             onChange={(e) => setEndpoint(e.target.value)}
-            className="bg-[#FFF5E6] px-2 py-2 border border-[#ffc885] rounded-xl outline-none w-full text-sm"
+            className="bg-[#FFF5E6] px-2 py-2 border border-[#ffc885] rounded-xl outline-hidden w-full text-sm"
             type="text"
             placeholder="http://localhost:1234/v1"
           />
           <input
             value={apiKey}
             onChange={(e) => setApiKey(e.target.value)}
-            className="bg-[#FFF5E6] px-2 py-2 border border-[#ffc885] rounded-xl outline-none w-full text-sm"
+            className="bg-[#FFF5E6] px-2 py-2 border border-[#ffc885] rounded-xl outline-hidden w-full text-sm"
             type="text"
             placeholder="xx-1234"
           />
           {endpoint && !!models?.length && (
             <select
-              className="bg-[#FFF5E6] px-2 py-2 border border-[#ffc885] rounded-xl outline-none w-full text-sm"
+              className="bg-[#FFF5E6] px-2 py-2 border border-[#ffc885] rounded-xl outline-hidden w-full text-sm"
               value={model}
               onChange={(e) => setModel(e.target.value)}
             >

@@ -68,17 +68,17 @@ const BranchNode = (props: NodeProps<ExtraNode>) => {
         id={`left`}
         type="source"
         position={Position.Left}
-        className="!-left-2"
+        className="-left-2!"
       />
       <NiceHandle
         id={`right`}
         type="source"
         position={Position.Right}
-        className="!-right-2"
+        className="-right-2!"
       />
 
       <div className="z-50 flex justify-center w-full">
-        <h1 className="inline-block flex-grow-0 flex-shrink-0 justify-center items-center bg-[#FF7F7F] p-1 px-5 rounded-full w-auto text-[#5E3535]">
+        <h1 className="inline-block grow-0 shrink-0 justify-center items-center bg-[#FF7F7F] p-1 px-5 rounded-full w-auto text-[#5E3535]">
           {title}
         </h1>
       </div>
@@ -86,7 +86,7 @@ const BranchNode = (props: NodeProps<ExtraNode>) => {
       {/* Messages */}
       <div className="mt-4 w-full h-[550px]">
         <div
-          className={`top-0 z-10 absolute bg-gradient-to-b from-[#FFF5E6] via-[#FFF5E6cc] to-transparent duration-200 ease-in-out w-full h-44 ${
+          className={`top-0 z-10 absolute bg-linear-to-b from-[#FFF5E6] via-[#FFF5E6cc] to-transparent duration-200 ease-in-out w-full h-44 ${
             !showGradient && "opacity-0"
           }`}
         ></div>
@@ -186,7 +186,7 @@ const BranchNode = (props: NodeProps<ExtraNode>) => {
           ai.distillMessage();
         }}
         className={`group-hover/node:visible bottom-8 -left-20 absolute flex justify-center items-center bg-[#FF7F7F] rounded-full cursor-pointer invisible size-12 
-          ${ai.distillLoading ? "!visible" : "invisible"}`}
+          ${ai.distillLoading ? "visible!" : "invisible"}`}
       >
         {!ai.distillLoading && <Note className="w-6 h-6" />}
         {ai.distillLoading && (
