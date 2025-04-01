@@ -1,6 +1,6 @@
 interface Props {
-  mode: "canvas" | "cards";
-  setMode: (mode: "canvas" | "cards") => void;
+  mode: "canvas" | "cards" | "books";
+  setMode: (mode: "canvas" | "cards" | "books") => void;
 }
 const ModeSwitch = ({ mode, setMode }: Props) => {
   return (
@@ -16,6 +16,12 @@ const ModeSwitch = ({ mode, setMode }: Props) => {
         onClick={() => setMode("cards")}
       >
         Cards
+      </span>
+      <span
+        className={`${mode == "books" && "font-semibold"}`}
+        onClick={() => setMode("books")}
+      >
+        Books
       </span>
     </div>
   );
