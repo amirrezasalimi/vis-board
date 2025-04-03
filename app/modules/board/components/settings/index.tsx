@@ -4,6 +4,7 @@ import useOai from "../../hooks/oai";
 import useCanvasAi from "../../hooks/canvas-ai";
 import { debounce } from "../../helpers/debounce";
 import type { Model } from "openai/resources/models.mjs";
+import { SearchableSelect } from "~/shared/components";
 
 const Settings = () => {
   const { apiKey, endpoint, setApiKey, setEndpoint, model, setModel } =
@@ -34,6 +35,8 @@ const Settings = () => {
     debouncedModelsReloader.current();
   }, [endpoint, apiKey]);
 
+  const modelOptions = models.map((m) => ({ id: m.id }));
+
   return (
     <Popover
       isOpen={isPopoverOpen}
@@ -57,17 +60,15 @@ const Settings = () => {
             placeholder="xx-1234"
           />
           {endpoint && !!models?.length && (
-            <select
-              className="bg-[#FFF5E6] px-2 py-2 border border-[#ffc885] rounded-xl outline-hidden w-full text-sm"
-              value={model}
-              onChange={(e) => setModel(e.target.value)}
-            >
-              {models.map((model) => (
-                <option key={model.id} value={model.id}>
-                  {model.id}
-                </option>
-              ))}
-            </select>
+            <SearchableSelect
+              options={modelOptions}
+              selectedOption={model}
+              onSelect={setModel}
+              placeholder="Select a model"
+              searchPlaceholder="Search models..."
+              direction="top"
+              maxHeight="320px"
+            />
           )}
           {!!loadingModels && (
             <div>

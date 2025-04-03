@@ -20,7 +20,7 @@ const BoardMain = () => {
       </>
     ),
     cards: <CardBoard />,
-    books: <BooksBoard />
+    books: <BooksBoard />,
   };
 
   return (
